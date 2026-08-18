@@ -1,0 +1,81 @@
+---
+import Container from './Container.astro';
+import LeadForm from './LeadForm.astro';
+import { site, footerNav } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-ink section-dark pt-16 pb-28 lg:pb-16">
+  <Container>
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Бренд + контакты -->
+      <div class="lg:col-span-1">
+        <a href="/" class="flex items-center gap-2.5" aria-label="SDANO — на главную">
+          <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="60" height="60" rx="7" fill="#C7A16B" />
+            <path d="M18 33 L28 43 L48 20" fill="none" stroke="#1C1B19" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="font-sans text-xl font-bold tracking-[0.22em] text-ivory">SDANO</span>
+        </a>
+        <p class="mt-4 text-sm text-ivory/60 max-w-xs">
+          Ремонт квартир и домов под ключ в Перми. Работаем по договору, фиксированная смета, гарантия.
+        </p>
+        <a href={site.phoneHref} class="mt-5 block text-lg font-semibold text-ivory hover:text-bronze transition-colors">
+          {site.phone}
+        </a>
+        <a href={`mailto:${site.email}`} class="mt-1 block text-sm text-ivory/70 hover:text-bronze transition-colors">
+          {site.email}
+        </a>
+      </div>
+
+      <!-- Меню -->
+      <nav class="lg:col-span-2" aria-label="Меню в подвале">
+        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-bronze mb-4">Навигация</div>
+        <ul class="grid grid-cols-2 gap-x-6 gap-y-3">
+          {
+            footerNav.map((item) => (
+              <li>
+                <a href={item.href} class="text-sm text-ivory/75 hover:text-bronze transition-colors">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Мессенджеры + короткая форма -->
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-bronze mb-4">Мессенджеры</div>
+        <div class="flex flex-col gap-3">
+          <a href={site.telegram.url} target="_blank" rel="noopener" data-messenger="telegram" class="inline-flex items-center gap-2.5 text-sm text-ivory/80 hover:text-bronze transition-colors">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M21.94 4.3 18.7 19.6c-.24 1.08-.88 1.34-1.78.83l-4.92-3.63-2.37 2.28c-.26.26-.48.48-.99.48l.35-5.02L18.1 6.9c.4-.35-.08-.55-.62-.2L6.16 13.9l-4.86-1.52c-1.06-.33-1.08-1.06.22-1.57l19-7.32c.88-.33 1.65.2 1.42 1.8Z"/>
+            </svg>
+            Telegram {site.telegram.handle}
+          </a>
+          <a href={site.max.url} target="_blank" rel="noopener" data-messenger="max" class="inline-flex items-center gap-2.5 text-sm text-ivory/80 hover:text-bronze transition-colors">
+            <span class="grid h-5 w-5 place-items-center rounded-xs bg-bronze text-[9px] font-bold text-ink">M</span>
+            MAX
+          </a>
+        </div>
+
+        <div class="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-bronze mb-3">Обратный звонок</div>
+        <LeadForm formType="Обратный звонок" source="footer" submitLabel="Жду звонка" compact dark />
+      </div>
+    </div>
+
+    <!-- Реквизиты + копирайт -->
+    <div class="mt-12 pt-6 border-t border-ivory/12 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div class="text-xs text-ivory/50 space-y-1">
+        <div>{site.legalName}</div>
+        <div>ИНН {site.requisites.inn} · ОГРНИП {site.requisites.ogrnip} · <a href="/rekvizity" class="hover:text-bronze underline underline-offset-2 decoration-ivory/30">реквизиты</a></div>
+        <div>© {year} SDANO · {site.city}. Все права защищены.</div>
+      </div>
+      <a href="/politika" class="text-xs text-ivory/60 hover:text-bronze transition-colors underline underline-offset-4 decoration-ivory/30">
+        Политика обработки персональных данных
+      </a>
+    </div>
+  </Container>
+</footer>

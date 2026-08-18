@@ -1,0 +1,37 @@
+---
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import { segments } from '../../data/segments';
+
+export const getStaticPaths = (() => {
+  return segments.map((segment) => ({
+    params: { segment: segment.slug },
+    props: { segment },
+  }));
+}) satisfies GetStaticPaths;
+
+const { segment } = Astro.props;
+---
+
+<SiteLayout
+  title={`${segment.title} — SDANO`}
+  description={segment.intro}
+  path={`/remont/${segment.slug}`}
+>
+  <PageHero eyebrow="Ремонт под ключ" title={segment.title} subtitle={segment.intro} />
+  <Section bg="ivory" narrow>
+    <div class="prose-links max-w-prose space-y-4 text-muted-2">
+      <p class="text-lead text-ink">{segment.intro}</p>
+      <p>
+        Это SEO-посадочная страница-заглушка. Здесь будет развёрнутый текст под запрос,
+        примеры работ, цены и ответы на вопросы. Пока — «рыба».
+      </p>
+    </div>
+    <div class="mt-8">
+      <Button href="/#calc" variant="primary">Рассчитать стоимость</Button>
+    </div>
+  </Section>
+</SiteLayout>

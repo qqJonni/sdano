@@ -1,0 +1,58 @@
+---
+// Заголовок секции со знаком-галочкой (квадрат с галочкой) перед текстом.
+export interface Props {
+  title: string;
+  eyebrow?: string;
+  as?: 'h1' | 'h2' | 'h3';
+  align?: 'left' | 'center';
+  /** на тёмном фоне — светлый текст */
+  dark?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  eyebrow,
+  as: Tag = 'h2',
+  align = 'left',
+  dark = false,
+  class: className = '',
+} = Astro.props;
+
+const isCenter = align === 'center';
+---
+
+<div class:list={['flex flex-col gap-3', isCenter && 'items-center text-center', className]}>
+  {
+    eyebrow && (
+      <span
+        class:list={[
+          'text-xs font-semibold uppercase tracking-[0.18em]',
+          dark ? 'text-bronze' : 'text-bronze',
+        ]}
+      >
+        {eyebrow}
+      </span>
+    )
+  }
+  <div class:list={['flex items-start gap-3', isCenter && 'justify-center']}>
+    <!-- Знак-мотив: квадрат с галочкой -->
+    <svg
+      class="mt-[0.35em] h-[0.9em] w-[0.9em] shrink-0 text-h2"
+      viewBox="0 0 64 64"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect x="2" y="2" width="60" height="60" rx="7" fill={dark ? '#C7A16B' : '#1C1B19'} />
+      <path
+        d="M18 33 L28 43 L48 20"
+        fill="none"
+        stroke={dark ? '#1C1B19' : '#C7A16B'}
+        stroke-width="6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    <Tag class:list={[dark && 'text-ivory']}>{title}</Tag>
+  </div>
+</div>

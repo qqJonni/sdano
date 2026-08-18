@@ -1,0 +1,103 @@
+---
+// Временная страница проверки дизайн-системы (этап A ТЗ №1).
+// Будет удалена/скрыта после сборки главной.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+
+const swatches = [
+  ['--ink', '#1C1B19', 'текст, тёмные секции'],
+  ['--green', '#23423A', 'фирменный зелёный'],
+  ['--green-2', '#2C4E45', 'второй зелёный'],
+  ['--bronze', '#C7A16B', 'акцент / кнопки'],
+  ['--ivory', '#F6F3EE', 'фон страницы'],
+  ['--ivory-2', '#EFEAE1', 'чередование секций'],
+  ['--paper', '#FFFFFF', 'карточки'],
+  ['--line', '#E4DFD6', 'границы'],
+  ['--muted', '#6B675F', 'вторичный текст'],
+];
+---
+
+<BaseLayout title="SDANO · Дизайн-система" description="Проверка дизайн-системы" noindex>
+  <!-- Палитра -->
+  <Section bg="ivory" title="Дизайн-система SDANO" eyebrow="Этап A · разделы 1–2">
+    <p class="max-w-prose text-lead text-muted-2 mb-10">
+      Тёмно-зелёный + бронза + айвори. Заголовки — Cormorant Garamond, интерфейс и
+      цифры — Manrope. Знак-мотив — квадрат с галочкой.
+    </p>
+
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      {
+        swatches.map(([name, hex, note]) => (
+          <div class="overflow-hidden rounded-card border border-line bg-paper">
+            <div class="h-20" style={`background:${hex}`} />
+            <div class="p-3">
+              <div class="font-semibold">{name}</div>
+              <div class="text-sm text-muted-2">{hex}</div>
+              <div class="text-xs text-muted-2 mt-1">{note}</div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- Типографика -->
+  <Section bg="ivory-2" title="Типографика" eyebrow="Cormorant + Manrope">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div class="space-y-4">
+        <h1>Ремонт под ключ в Перми</h1>
+        <h2>Форматы ремонта и цены</h2>
+        <h3>Что входит в стоимость</h3>
+        <p class="text-lead">
+          Lead-абзац: работаем по договору с фиксированной сметой, гарантия 3 года.
+        </p>
+        <p class="max-w-prose">
+          Базовый текст 16px / 1.6. Пример параграфа с
+          <a class="link" href="#">внутренней ссылкой</a>, которая при наведении
+          подсвечивается бронзой. Цифры — Manrope: 450+, 20 лет, 3 года.
+        </p>
+      </div>
+      <div class="rounded-card border border-line bg-paper p-6">
+        <div class="text-sm uppercase tracking-widest text-bronze mb-4">Знак-галочка</div>
+        <SectionHeading title="Заголовок с буллетом" eyebrow="SectionHeading" />
+        <div class="mt-6 rounded-card bg-green p-6 section-dark">
+          <SectionHeading title="Тот же знак на тёмном" dark />
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Кнопки -->
+  <Section bg="ivory" title="Кнопки" eyebrow="Button">
+    <div class="flex flex-wrap items-center gap-4">
+      <Button variant="primary">Рассчитать стоимость</Button>
+      <Button variant="primary" size="lg">Primary Large</Button>
+      <Button variant="secondary">Смотреть портфолио</Button>
+    </div>
+    <div class="mt-6 rounded-card bg-green p-8">
+      <div class="flex flex-wrap items-center gap-4">
+        <Button variant="primary">Оставить заявку</Button>
+        <Button variant="ghost">Написать в Telegram</Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Чередование фонов -->
+  <Section bg="green" title="Тёмно-зелёная секция" eyebrow="Чередование фонов" headingAs="h2">
+    <p class="max-w-prose text-ivory/80">
+      Пример акцентного тёмного блока (hero / trust-bar). Текст автоматически светлеет.
+    </p>
+  </Section>
+  <Section bg="green-2" title="Второй зелёный" >
+    <p class="max-w-prose text-ivory/80">green-2 — карточки и фоны на тёмном.</p>
+  </Section>
+  <Section bg="ink" title="Чёрная секция" >
+    <p class="max-w-prose text-ivory/70">ink — для контрастных блоков.</p>
+  </Section>
+  <Section bg="ivory-2" title="Возврат к айвори" >
+    <p class="max-w-prose text-muted-2">Чередование ivory / ivory-2 / тёмные секции.</p>
+  </Section>
+</BaseLayout>

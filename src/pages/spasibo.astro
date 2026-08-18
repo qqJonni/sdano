@@ -1,0 +1,23 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+---
+
+<SiteLayout title="Спасибо за заявку — SDANO" description="Заявка принята. Скоро свяжемся." path="/spasibo" noindex>
+  <Section bg="ivory" class="min-h-[60vh] grid place-items-center text-center">
+    <div class="max-w-xl">
+      <svg class="mx-auto h-16 w-16" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="60" height="60" rx="10" fill="#23423A"/>
+        <path d="M18 33 L28 43 L48 20" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1 class="mt-6">Спасибо! Заявка принята</h1>
+      <p class="mt-4 text-lead text-muted-2">
+        Мы свяжемся с вами в ближайшее время. Обычно отвечаем в течение рабочего дня.
+      </p>
+      <div class="mt-8">
+        <Button href="/" variant="primary">На главную</Button>
+      </div>
+    </div>
+  </Section>
+</SiteLayout>

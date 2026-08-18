@@ -1,0 +1,32 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Section from '../components/Section.astro';
+
+const reviews = [
+  { name: 'Анна К.', role: 'ЖК «Горки», 2-комн.', text: 'Сделали ремонт точно в срок и в смету. Прораб всегда на связи, фотоотчёты каждую неделю.' },
+  { name: 'Дмитрий С.', role: 'Дом, Пермский р-н', text: 'Отделка коттеджа под ключ. Понравился системный подход и аккуратность бригады.' },
+  { name: 'Мария и Игорь', role: 'ЖК «Экватор», студия', text: 'Первый ремонт в жизни — было спокойно. Всё объяснили, помогли с материалами.' },
+  { name: 'Ольга П.', role: 'ЖК «Медовый», 3-комн.', text: 'Капитальный ремонт с перепланировкой. Всё по договору, без сюрпризов по цене.' },
+  { name: 'Сергей В.', role: 'Новостройка, студия', text: 'Быстро и аккуратно. Помогли выбрать материалы под бюджет.' },
+  { name: 'Екатерина М.', role: 'ЖК «Острова», 1-комн.', text: 'Приятно удивил сервис и чистота на объекте. Рекомендую.' },
+];
+---
+
+<SiteLayout title="Отзывы клиентов — SDANO" description="Отзывы о ремонте квартир и домов SDANO в Перми." path="/otzyvy">
+  <PageHero eyebrow="Отзывы" title="Отзывы клиентов" subtitle="Что говорят о ремонте под ключ от SDANO." />
+  <Section bg="ivory">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {reviews.map((r) => (
+        <figure class="flex flex-col rounded-card border border-line bg-paper p-6">
+          <div class="text-bronze text-2xl leading-none">“</div>
+          <blockquote class="mt-2 flex-1 text-ink/90">{r.text}</blockquote>
+          <figcaption class="mt-5 border-t border-line pt-4">
+            <div class="font-semibold text-ink">{r.name}</div>
+            <div class="text-sm text-muted-2">{r.role}</div>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </Section>
+</SiteLayout>

@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  /** относительный путь к OG-картинке в /public, напр. '/og/main.jpg' */
+  ogImage?: string;
+  /** канонический путь, напр. '/uslugi/pod-klyuch' */
+  path?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'SDANO — ремонт квартир и домов под ключ в Перми',
+  description = 'Ремонт квартир и домов под ключ в Перми. Работаем по договору, фиксированная смета, гарантия 3 года. 20 лет опыта, 450+ объектов.',
+  ogImage = '/og/default.jpg',
+  path,
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = 'https://sdano-perm.ru';
+const canonical = path ? new URL(path, siteUrl).href : new URL(Astro.url.pathname, siteUrl).href;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Favicon из знака бренда -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="mask-icon" href="/favicon.svg" color="#23423A" />
+    <meta name="theme-color" content="#23423A" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SDANO" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage, siteUrl).href} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, siteUrl).href} />
+
+    <!-- Self-host шрифтов (см. @font-face в global.css). Preload основного веса (кириллица). -->
+    <link rel="preload" href="/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cormorant-cyrillic-600.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <slot name="header" />
+    <main>
+      <slot />
+    </main>
+    <slot name="footer" />
+    <slot name="floating" />
+  </body>
+</html>

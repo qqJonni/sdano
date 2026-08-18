@@ -1,0 +1,51 @@
+---
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import { services } from '../../data/services';
+
+export const getStaticPaths = (() => {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}) satisfies GetStaticPaths;
+
+const { service } = Astro.props;
+---
+
+<SiteLayout
+  title={`${service.title} в Перми — SDANO`}
+  description={service.description}
+  path={`/uslugi/${service.slug}`}
+>
+  <PageHero eyebrow="Услуга" title={service.title} subtitle={service.short} />
+  <Section bg="ivory">
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-7 max-w-prose">
+        <p class="text-lead text-ink">{service.description}</p>
+        <h2 class="mt-8">Что входит</h2>
+        <ul class="mt-4 space-y-2">
+          {service.includes.map((item) => (
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <rect x="2" y="2" width="60" height="60" rx="7" fill="#1C1B19"/>
+                <path d="M18 33 L28 43 L48 20" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <aside class="lg:col-span-5">
+        <div class="rounded-card border border-line bg-paper p-6">
+          {service.priceFrom && <div class="font-display text-3xl text-ink">{service.priceFrom}</div>}
+          <p class="mt-2 text-sm text-muted-2">Точную стоимость зафиксируем в договоре после замера.</p>
+          <Button href="/#calc" variant="primary" class="mt-5 w-full">Рассчитать стоимость</Button>
+        </div>
+      </aside>
+    </div>
+  </Section>
+</SiteLayout>

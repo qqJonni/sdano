@@ -1,0 +1,5 @@
+<svg width="440" height="140" viewBox="0 0 440 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SDANO">
+  <rect x="34" y="38" width="64" height="64" rx="7" fill="#1C1B19"/>
+  <path d="M52 71 L64 83 L86 55" fill="none" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="122" y="89" font-family="Manrope, 'Segoe UI', Arial, sans-serif" font-size="46" font-weight="700" letter-spacing="6" fill="#1C1B19">SDANO</text>
+</svg>

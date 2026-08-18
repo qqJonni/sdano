@@ -1,0 +1,27 @@
+---
+import Container from './Container.astro';
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  eyebrow?: string;
+}
+
+const { title, subtitle, eyebrow } = Astro.props;
+---
+
+<section class="bg-green section-dark">
+  <Container class="py-14 md:py-20">
+    {eyebrow && (
+      <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-bronze">
+        <svg class="h-4 w-4" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="60" height="60" rx="7" fill="#C7A16B"/>
+          <path d="M18 33 L28 43 L48 20" stroke="#23423A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {eyebrow}
+      </span>
+    )}
+    <h1 class="mt-4 max-w-3xl text-ivory">{title}</h1>
+    {subtitle && <p class="mt-5 max-w-2xl text-lead text-ivory/80">{subtitle}</p>}
+  </Container>
+</section>

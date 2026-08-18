@@ -1,0 +1,22 @@
+---
+// Форма «Обратный звонок» — обёртка над LeadForm с фиксированным formType.
+import LeadForm from './LeadForm.astro';
+
+export interface Props {
+  source?: string;
+  layout?: 'stack' | 'inline';
+  dark?: boolean;
+  class?: string;
+}
+
+const { source = 'callback', layout = 'inline', dark = false, class: className = '' } = Astro.props;
+---
+
+<LeadForm
+  formType="Обратный звонок"
+  source={source}
+  layout={layout}
+  submitLabel="Жду звонка"
+  dark={dark}
+  class={className}
+/>

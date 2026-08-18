@@ -1,0 +1,383 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Section from '../components/Section.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Calculator from '../components/Calculator.astro';
+import LeadForm from '../components/LeadForm.astro';
+import CallbackForm from '../components/CallbackForm.astro';
+import { services } from '../data/services';
+import { projects } from '../data/projects';
+import { segments, segmentGroups } from '../data/segments';
+import { complexes } from '../data/complexes';
+import { site } from '../data/site';
+
+const trust = [
+  { num: '20 лет', label: 'на рынке ремонта' },
+  { num: '450+', label: 'сданных объектов' },
+  { num: '3 года', label: 'гарантия на работы' },
+  { num: 'Договор', label: 'фиксированная смета' },
+];
+
+const principles = [
+  { title: 'Фиксированная смета', text: 'Стоимость закреплена в договоре. Без «доплат по ходу» и скрытых работ.' },
+  { title: 'Один прораб', text: 'Один ответственный за объект: от закупки материалов до сдачи.' },
+  { title: 'Свои бригады', text: 'Проверенные мастера в штате, а не случайные субподрядчики.' },
+  { title: 'Контроль по этапам', text: 'Фотоотчёты и приёмка на каждом этапе — вы видите прогресс.' },
+];
+
+const steps = [
+  ['Заявка и замер', 'Обсуждаем задачу, выезжаем на объект, снимаем размеры.'],
+  ['Смета и договор', 'Фиксируем объём, сроки и цену в договоре.'],
+  ['Дизайн и подбор', 'Планировка, материалы, комплектация под бюджет.'],
+  ['Черновые работы', 'Демонтаж, инженерия, выравнивание оснований.'],
+  ['Чистовая отделка', 'Финишные покрытия, установка, электрика и сантехника.'],
+  ['Приёмка и гарантия', 'Уборка, сдача по акту, гарантийные обязательства.'],
+];
+
+const includes = [
+  'Черновые материалы и работы',
+  'Электрика и слаботочка',
+  'Сантехника и разводка',
+  'Выравнивание стен и полов',
+  'Чистовая отделка',
+  'Двери и фурнитура',
+  'Вывоз мусора',
+  'Финальная уборка',
+];
+
+const reviews = [
+  { name: 'Анна К.', role: 'ЖК «Горки», 2-комн.', text: 'Сделали ремонт точно в срок и в смету. Прораб всегда на связи, фотоотчёты каждую неделю.' },
+  { name: 'Дмитрий С.', role: 'Дом, Пермский р-н', text: 'Отделка коттеджа под ключ. Понравился системный подход и аккуратность бригады.' },
+  { name: 'Мария и Игорь', role: 'ЖК «Экватор», студия', text: 'Первый ремонт в жизни — было спокойно. Всё объяснили, помогли с материалами.' },
+];
+
+const faq = [
+  ['Сколько стоит ремонт под ключ?', 'Стоимость зависит от площади, состояния объекта и уровня отделки. Точную вилку покажет калькулятор, финальную цену фиксируем в договоре после замера.'],
+  ['Вы работаете по договору?', 'Да. Заключаем договор с фиксированной сметой, сроками и гарантийными обязательствами.'],
+  ['Даёте гарантию?', 'Да, гарантия 3 года на выполненные работы. Гарантия на материалы — по условиям производителей.'],
+  ['Можно ли ремонт без дизайн-проекта?', 'Можно. Но проект помогает избежать переделок и точнее спланировать бюджет — предложим оптимальный вариант.'],
+  ['Закупаете материалы сами?', 'Да, берём закупку и логистику на себя или работаем с вашими материалами — как удобнее.'],
+];
+---
+
+<SiteLayout
+  title="SDANO — ремонт квартир и домов под ключ в Перми"
+  description="Ремонт квартир и домов под ключ в Перми: фиксированная смета, работа по договору, гарантия 3 года. 20 лет опыта, 450+ объектов."
+  path="/"
+>
+  <!-- 1. HERO -->
+  <section class="bg-green section-dark relative overflow-hidden">
+    <Container class="grid gap-10 py-16 md:py-24 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-6">
+        <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-bronze">
+          <svg class="h-4 w-4" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="60" height="60" rx="7" fill="#C7A16B"/>
+            <path d="M18 33 L28 43 L48 20" stroke="#23423A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Ремонт под ключ в Перми
+        </span>
+        <h1 class="mt-5 text-ivory">
+          Ремонт квартир и домов, который сдают вовремя
+        </h1>
+        <p class="mt-6 max-w-xl text-lead text-ivory/80">
+          Фиксированная смета в договоре, свои бригады и один ответственный прораб.
+          Гарантия 3 года. Считаем стоимость за 1 минуту.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <Button href="/#calc" variant="primary" size="lg">Рассчитать стоимость</Button>
+          <Button href="/portfolio" variant="ghost" size="lg">Смотреть портфолио</Button>
+        </div>
+        <div class="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm text-ivory/70">
+          <span>✓ Работаем по договору</span>
+          <span>✓ Фиксированная цена</span>
+          <span>✓ Гарантия 3 года</span>
+        </div>
+      </div>
+      <!-- Место под фото -->
+      <div class="lg:col-span-6">
+        <div class="aspect-[4/3] w-full rounded-card border border-ivory/15 bg-green-2 grid place-items-center">
+          <span class="text-ivory/40 text-sm">Место под фото интерьера</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 2. TRUST BAR -->
+  <section class="bg-ink section-dark">
+    <Container class="grid grid-cols-2 gap-8 py-10 md:grid-cols-4 md:py-12">
+      {
+        trust.map((t) => (
+          <div class="text-center md:text-left">
+            <div class="font-display text-3xl md:text-4xl text-bronze">{t.num}</div>
+            <div class="mt-1 text-sm text-ivory/70">{t.label}</div>
+          </div>
+        ))
+      }
+    </Container>
+  </section>
+
+  <!-- 3. КАЛЬКУЛЯТОР-КВИЗ -->
+  <Calculator />
+
+  <!-- 4. ФОРМАТЫ РЕМОНТА -->
+  <Section bg="ivory-2" id="formaty" title="Форматы ремонта" eyebrow="Выберите под задачу">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {
+        services.slice(0, 4).map((s) => (
+          <article
+            class:list={[
+              'flex flex-col rounded-card border p-6 transition-transform duration-200 hover:-translate-y-1',
+              s.featured ? 'border-bronze bg-green section-dark shadow-card' : 'border-line bg-paper',
+            ]}
+          >
+            {s.featured && (
+              <span class="mb-3 inline-flex items-center gap-1.5 self-start rounded-xs bg-bronze px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-ink">
+                <svg class="h-3 w-3" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                  <path d="M18 33 L28 43 L48 20" stroke="#1C1B19" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Хит
+              </span>
+            )}
+            <h3 class:list={[s.featured && 'text-ivory']}>{s.title}</h3>
+            <p class:list={['mt-2 text-sm flex-1', s.featured ? 'text-ivory/75' : 'text-muted-2']}>{s.short}</p>
+            {s.priceFrom && (
+              <div class:list={['mt-4 font-display text-2xl', s.featured ? 'text-bronze' : 'text-ink']}>{s.priceFrom}</div>
+            )}
+            <a
+              href={`/uslugi/${s.slug}`}
+              class:list={['mt-4 text-sm font-semibold underline decoration-bronze decoration-2 underline-offset-[6px]', s.featured ? 'text-ivory' : 'text-ink']}
+            >
+              Подробнее
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- 5. ТЕХНОЛОГИЯ -->
+  <Section bg="ivory" id="tehnologiya" title="Технология SDANO" eyebrow="Почему сдаём вовремя">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        principles.map((p, i) => (
+          <div class="rounded-card border border-line bg-paper p-6">
+            <div class="font-display text-3xl text-bronze">{String(i + 1).padStart(2, '0')}</div>
+            <h3 class="mt-3 text-h3">{p.title}</h3>
+            <p class="mt-2 text-sm text-muted-2">{p.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- 6. ЭТАПЫ РАБОТЫ -->
+  <Section bg="ivory-2" title="Этапы работы" eyebrow="Прозрачный процесс">
+    <ol class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {
+        steps.map(([title, text], i) => (
+          <li class="relative rounded-card border border-line bg-paper p-6">
+            <span class="absolute right-5 top-4 font-display text-4xl text-line">{i + 1}</span>
+            <h3 class="text-h3 pr-10">{title}</h3>
+            <p class="mt-2 text-sm text-muted-2">{text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <!-- 7. ПОРТФОЛИО -->
+  <Section bg="ivory" title="Портфолио" eyebrow="Наши объекты">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        projects.map((p) => (
+          <a href={`/portfolio/${p.slug}`} class="group flex flex-col overflow-hidden rounded-card border border-line bg-paper">
+            <div class="aspect-[4/3] overflow-hidden bg-ivory-2">
+              <img src={p.cover} alt={p.title} loading="lazy" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+            </div>
+            <div class="p-5">
+              <div class="text-xs font-semibold uppercase tracking-wide text-bronze">{p.format} · {p.area}</div>
+              <h3 class="mt-1.5 text-h3">{p.title}</h3>
+              <p class="mt-1 text-sm text-muted-2">{p.district}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+    <div class="mt-10">
+      <Button href="/portfolio" variant="secondary">Все объекты</Button>
+    </div>
+  </Section>
+
+  <!-- 8. ОТЗЫВЫ -->
+  <Section bg="green" title="Отзывы клиентов" eyebrow="Что говорят о нас">
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        reviews.map((r) => (
+          <figure class="flex flex-col rounded-card border border-ivory/15 bg-green-2 p-6">
+            <div class="text-bronze text-2xl leading-none">“</div>
+            <blockquote class="mt-2 flex-1 text-ivory/85">{r.text}</blockquote>
+            <figcaption class="mt-5 border-t border-ivory/12 pt-4">
+              <div class="font-semibold text-ivory">{r.name}</div>
+              <div class="text-sm text-ivory/60">{r.role}</div>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+    <div class="mt-10">
+      <Button href="/otzyvy" variant="ghost">Все отзывы</Button>
+    </div>
+  </Section>
+
+  <!-- 9. SEO-ХАБ -->
+  <Section bg="ivory-2" title="Ремонт под ваш случай" eyebrow="Популярные направления">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        {
+          segmentGroups.map((g) => (
+            <div class="mb-6">
+              <div class="text-xs font-semibold uppercase tracking-[0.18em] text-bronze mb-3">{g.title}</div>
+              <div class="flex flex-wrap gap-2">
+                {segments.filter((s) => s.group === g.key).map((s) => (
+                  <a href={`/remont/${s.slug}`} class="rounded-btn border border-line bg-paper px-3 py-1.5 text-sm text-ink transition-colors hover:border-bronze hover:text-bronze">
+                    {s.menuLabel}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-bronze mb-3">Ремонт в ЖК Перми</div>
+        <div class="flex flex-wrap gap-2">
+          {
+            complexes.map((c) => (
+              <a href={`/zhk/${c.slug}`} class="rounded-btn border border-line bg-paper px-3 py-1.5 text-sm text-ink transition-colors hover:border-bronze hover:text-bronze">
+                {c.name}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 10. ЧТО ВХОДИТ В СТОИМОСТЬ -->
+  <Section bg="ivory" title="Что входит в стоимость" eyebrow="Прозрачно">
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        includes.map((item) => (
+          <div class="flex items-center gap-3 rounded-card border border-line bg-paper px-4 py-3">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect x="2" y="2" width="60" height="60" rx="7" fill="#1C1B19"/>
+              <path d="M18 33 L28 43 L48 20" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-sm">{item}</span>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- 11. ГАРАНТИЯ И ДОГОВОР -->
+  <Section bg="green" title="Гарантия и договор" eyebrow="Ваша защита">
+    <div class="grid gap-6 md:grid-cols-3">
+      {[
+        ['Договор', 'Объём, сроки и стоимость закреплены документально. Без устных договорённостей.'],
+        ['Фиксированная смета', 'Цена не меняется по ходу работ, если не меняете объём вы сами.'],
+        ['Гарантия 3 года', 'Устраняем гарантийные случаи бесплатно в течение трёх лет.'],
+      ].map(([t, d]) => (
+        <div class="rounded-card border border-ivory/15 bg-green-2 p-6">
+          <h3 class="text-ivory">{t}</h3>
+          <p class="mt-2 text-sm text-ivory/75">{d}</p>
+        </div>
+      ))}
+    </div>
+    <div class="mt-10">
+      <Button href="/garantiya" variant="primary">Подробнее о гарантии</Button>
+    </div>
+  </Section>
+
+  <!-- 12. О КОМПАНИИ / МАСТЕР -->
+  <Section bg="ivory-2" title="О компании" eyebrow="Кто делает ваш ремонт">
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-5">
+        <div class="aspect-[4/5] w-full max-w-sm rounded-card border border-line bg-ivory grid place-items-center">
+          <span class="text-muted-2 text-sm">Фото основателя / бригады</span>
+        </div>
+      </div>
+      <div class="lg:col-span-7">
+        <p class="text-lead text-ink">
+          SDANO — команда с 20-летним опытом ремонта в Перми. За это время сдали более
+          450 объектов: от студий в новостройках до загородных домов.
+        </p>
+        <p class="mt-4 text-muted-2 max-w-prose">
+          Мы строим процесс так, чтобы ремонт был предсказуемым: фиксируем цену, ведём
+          фотоотчёты, отвечаем за результат по договору. Один прораб сопровождает объект
+          от замера до сдачи ключей.
+        </p>
+        <div class="mt-8">
+          <Button href="/o-kompanii" variant="secondary">Больше о нас</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 13. ОБРАТНЫЙ ЗВОНОК -->
+  <Section bg="ivory">
+    <div class="rounded-card border border-line bg-paper p-8 md:p-12 grid gap-8 lg:grid-cols-2 lg:items-center">
+      <div>
+        <SectionHeading title="Перезвоним за 15 минут" eyebrow="Обратный звонок" />
+        <p class="mt-5 max-w-md text-muted-2">
+          Оставьте номер — консультант ответит на вопросы и поможет с расчётом.
+          Без навязчивых звонков.
+        </p>
+      </div>
+      <CallbackForm source="index-callback" />
+    </div>
+  </Section>
+
+  <!-- 14. FAQ (аккордеон) -->
+  <Section bg="ivory-2" title="Частые вопросы" eyebrow="FAQ" narrow>
+    <div class="divide-y divide-line rounded-card border border-line bg-paper">
+      {
+        faq.map(([q, a]) => (
+          <details class="group px-6 py-4">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-1 font-semibold text-ink">
+              {q}
+              <svg class="h-5 w-5 shrink-0 text-bronze transition-transform duration-200 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+            </summary>
+            <p class="mt-2 text-sm text-muted-2">{a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- 15. ФИНАЛЬНЫЙ CTA + ФОРМА (заглушка) -->
+  <section class="bg-green section-dark">
+    <Container class="py-16 md:py-24">
+      <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+        <div>
+          <SectionHeading title="Рассчитайте ремонт под ключ" eyebrow="Начнём?" dark />
+          <p class="mt-5 max-w-md text-ivory/80">
+            Оставьте контакты — пришлём ориентировочную смету и предложим удобное время
+            для замера в {site.city}.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm text-ivory/70">
+            <span>✓ Ответим в течение дня</span>
+            <span>✓ Бесплатный замер</span>
+          </div>
+        </div>
+        <div class="rounded-card border border-ivory/15 bg-green-2 p-6 md:p-8">
+          <LeadForm formType="Форма сметы" source="index-final-cta" submitLabel="Получить расчёт" dark />
+        </div>
+      </div>
+    </Container>
+  </section>
+</SiteLayout>

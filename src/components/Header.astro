@@ -1,0 +1,150 @@
+---
+import Container from './Container.astro';
+import Button from './Button.astro';
+import { site, mainNav } from '../data/site';
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-50 border-b border-transparent bg-ivory/95 backdrop-blur transition-all duration-300 ease-premium data-[scrolled]:border-line data-[scrolled]:shadow-header"
+>
+  <Container class="flex h-[76px] items-center justify-between gap-4 transition-[height] duration-300 data-[scrolled]:h-[64px]">
+    <!-- Лого -->
+    <a href="/" class="flex items-center gap-2.5 shrink-0" aria-label="SDANO — на главную">
+      <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="60" height="60" rx="7" fill="#1C1B19" />
+        <path d="M18 33 L28 43 L48 20" fill="none" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="font-sans text-xl font-bold tracking-[0.22em] text-ink">SDANO</span>
+    </a>
+
+    <!-- Меню (десктоп) -->
+    <nav class="hidden lg:flex items-center gap-7" aria-label="Основное меню">
+      {
+        mainNav.map((item) => (
+          <a
+            href={item.href}
+            class="text-[15px] font-medium text-ink/80 transition-colors hover:text-bronze"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <!-- Правый блок (десктоп) -->
+    <div class="hidden lg:flex items-center gap-5 shrink-0">
+      <span class="flex items-center gap-1.5 text-sm text-muted-2">
+        <svg class="h-4 w-4 text-bronze" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 21s-7-5.686-7-11a7 7 0 1 1 14 0c0 5.314-7 11-7 11Z" stroke-linejoin="round"/>
+          <circle cx="12" cy="10" r="2.5"/>
+        </svg>
+        {site.city}
+      </span>
+      <a href={site.phoneHref} class="text-[15px] font-semibold text-ink transition-colors hover:text-bronze whitespace-nowrap">
+        {site.phone}
+      </a>
+      <a
+        href={site.telegram.url}
+        target="_blank"
+        rel="noopener"
+        data-messenger="telegram"
+        aria-label="Написать в Telegram"
+        class="grid h-10 w-10 place-items-center rounded-btn border border-line text-ink transition-colors hover:border-bronze hover:text-bronze"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M21.94 4.3 18.7 19.6c-.24 1.08-.88 1.34-1.78.83l-4.92-3.63-2.37 2.28c-.26.26-.48.48-.99.48l.35-5.02L18.1 6.9c.4-.35-.08-.55-.62-.2L6.16 13.9l-4.86-1.52c-1.06-.33-1.08-1.06.22-1.57l19-7.32c.88-.33 1.65.2 1.42 1.8Z"/>
+        </svg>
+      </a>
+      <Button href="/#calc" variant="primary">Рассчитать</Button>
+    </div>
+
+    <!-- Бургер (моб.) -->
+    <button
+      id="burger-btn"
+      type="button"
+      class="lg:hidden grid h-11 w-11 place-items-center rounded-btn border border-line text-ink"
+      aria-label="Открыть меню"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+    </button>
+  </Container>
+
+  <!-- Мобильное меню -->
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 z-50 hidden bg-ink/50 lg:hidden"
+    aria-hidden="true"
+  >
+    <div id="mobile-panel" class="absolute right-0 top-0 h-full w-[86%] max-w-sm translate-x-full bg-ivory shadow-float transition-transform duration-300 ease-premium">
+      <div class="flex h-[76px] items-center justify-between px-5 border-b border-line">
+        <span class="font-sans text-lg font-bold tracking-[0.22em]">SDANO</span>
+        <button id="close-btn" type="button" class="grid h-11 w-11 place-items-center rounded-btn border border-line" aria-label="Закрыть меню">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+      <nav class="flex flex-col p-5 gap-1" aria-label="Мобильное меню">
+        {
+          mainNav.map((item) => (
+            <a href={item.href} class="mobile-link py-3 text-lg font-medium border-b border-line/70">
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="p-5 mt-2 flex flex-col gap-3">
+        <a href={site.phoneHref} class="text-lg font-semibold text-ink">{site.phone}</a>
+        <span class="text-sm text-muted-2">{site.city} · {site.workHours}</span>
+        <Button href="/#calc" variant="primary" class="mt-2 w-full">Рассчитать стоимость</Button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Островной JS: уплотнение шапки при скролле + мобильное меню
+  const header = document.getElementById('site-header');
+  const onScroll = () => {
+    if (!header) return;
+    if (window.scrollY > 8) header.setAttribute('data-scrolled', '');
+    else header.removeAttribute('data-scrolled');
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const menu = document.getElementById('mobile-menu');
+  const panel = document.getElementById('mobile-panel');
+  const burger = document.getElementById('burger-btn');
+  const closeBtn = document.getElementById('close-btn');
+
+  const open = () => {
+    menu?.classList.remove('hidden');
+    menu?.setAttribute('aria-hidden', 'false');
+    burger?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => panel?.classList.remove('translate-x-full'));
+  };
+  const close = () => {
+    panel?.classList.add('translate-x-full');
+    burger?.setAttribute('aria-expanded', 'false');
+    menu?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    window.setTimeout(() => menu?.classList.add('hidden'), 300);
+  };
+
+  burger?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+  menu?.addEventListener('click', (e) => {
+    if (e.target === menu) close();
+  });
+  document.querySelectorAll('.mobile-link').forEach((l) => l.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu && !menu.classList.contains('hidden')) close();
+  });
+</script>

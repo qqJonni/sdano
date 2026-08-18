@@ -1,0 +1,329 @@
+---
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+import { objectTypes, areaPresets, formats, conditions } from '../data/pricing';
+
+const totalSteps = 5;
+---
+
+<section id="calc" class="bg-ivory py-16 md:py-24 scroll-mt-24">
+  <Container>
+    <div class="mx-auto max-w-3xl">
+      <SectionHeading title="Калькулятор стоимости ремонта" eyebrow="За 1 минуту" align="center" class="items-center mb-8" />
+
+      <div class="rounded-card border border-line bg-paper p-6 md:p-8" data-calc>
+        <!-- Прогресс -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between text-xs text-muted-2">
+            <span>Шаг <span data-cur>1</span> из {totalSteps}</span>
+            <span data-step-label>Тип объекта</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ivory-2">
+            <div class="h-full rounded-full bg-bronze transition-all duration-300 ease-premium" data-progress style="width:20%"></div>
+          </div>
+        </div>
+
+        <!-- Шаг 1: тип объекта -->
+        <div data-step="1">
+          <h3 class="mb-4 text-h3">Что ремонтируем?</h3>
+          <div class="grid gap-3 sm:grid-cols-2">
+            {objectTypes.map((o) => (
+              <button type="button" class="calc-opt" data-group="type" data-value={o.id}>
+                <span class="calc-opt__title">{o.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Шаг 2: площадь -->
+        <div data-step="2" hidden>
+          <h3 class="mb-4 text-h3">Площадь, м²</h3>
+          <input
+            type="number" inputmode="numeric" min="1" max="2000" step="1"
+            placeholder="Например, 54"
+            data-area
+            class="w-full rounded-btn border border-line bg-ivory px-4 py-3 text-lg text-ink focus:border-bronze focus:outline-none"
+          />
+          <div class="mt-3 flex flex-wrap gap-2">
+            {areaPresets.map((a) => (
+              <button type="button" class="calc-preset" data-preset={a}>{a} м²</button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Шаг 3: формат -->
+        <div data-step="3" hidden>
+          <h3 class="mb-4 text-h3">Формат ремонта</h3>
+          <div class="grid gap-3 sm:grid-cols-2">
+            {formats.map((o) => (
+              <button type="button" class="calc-opt calc-opt--col" data-group="format" data-value={o.id}>
+                <span class="calc-opt__title">{o.label}</span>
+                <span class="calc-opt__hint">{o.hint}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Шаг 4: состояние -->
+        <div data-step="4" hidden>
+          <h3 class="mb-4 text-h3">Состояние объекта</h3>
+          <div class="grid gap-3">
+            {conditions.map((o) => (
+              <button type="button" class="calc-opt calc-opt--col" data-group="condition" data-value={o.id}>
+                <span class="calc-opt__title">{o.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Шаг 5: контакт -->
+        <div data-step="5" hidden>
+          <h3 class="mb-2 text-h3">Куда прислать смету?</h3>
+          <p class="mb-4 text-sm text-muted-2">Рассчитаем стоимость и пришлём после короткого разговора.</p>
+          <form data-calc-form class="flex flex-col gap-3" novalidate>
+            <input type="text" name="name" placeholder="Ваше имя" autocomplete="name"
+              class="rounded-btn border border-line bg-ivory px-4 py-3 text-ink focus:border-bronze focus:outline-none" />
+            <input type="tel" name="phone" inputmode="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel"
+              class="rounded-btn border border-line bg-ivory px-4 py-3 text-ink focus:border-bronze focus:outline-none" />
+
+            <!-- honeypot -->
+            <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"
+              class="absolute left-[-9999px] h-0 w-0 opacity-0" />
+
+            <label class="flex items-start gap-2.5 text-sm text-muted-2">
+              <input type="checkbox" name="consent" class="mt-0.5 h-4 w-4 accent-[color:var(--green)]" />
+              <span>Согласен с <a href="/politika" class="underline decoration-bronze underline-offset-2 hover:text-bronze">политикой обработки персональных данных</a></span>
+            </label>
+
+            <p data-calc-error class="hidden text-sm text-red-600"></p>
+
+            <button type="submit" data-calc-submit
+              class="mt-1 inline-flex items-center justify-center gap-2 rounded-btn bg-bronze px-6 py-4 font-bold text-ink transition-all duration-200 ease-premium hover:brightness-105 disabled:opacity-60 disabled:cursor-not-allowed">
+              <span data-submit-text>Получить точную смету</span>
+              <svg data-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity="0.25"/>
+                <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Навигация -->
+        <div class="mt-8 flex items-center justify-between gap-4" data-nav>
+          <button type="button" data-back
+            class="inline-flex items-center gap-2 rounded-btn px-4 py-3 text-sm font-semibold text-ink/70 transition-colors hover:text-ink disabled:opacity-40 disabled:cursor-not-allowed">
+            ← Назад
+          </button>
+          <button type="button" data-next disabled
+            class="inline-flex items-center gap-2 rounded-btn bg-bronze px-6 py-3 font-bold text-ink transition-all duration-200 hover:brightness-105 disabled:opacity-40 disabled:cursor-not-allowed">
+            Далее →
+          </button>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .calc-opt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+  .calc-opt--col { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .calc-opt:hover { border-color: var(--bronze); }
+  .calc-opt.is-active {
+    border-color: var(--bronze);
+    background: color-mix(in srgb, var(--bronze) 12%, var(--paper));
+  }
+  .calc-opt__title { font-weight: 600; color: var(--ink); }
+  .calc-opt__hint { font-size: 0.8125rem; color: var(--muted); }
+
+  .calc-preset {
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    font-size: 0.875rem;
+    color: var(--ink);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .calc-preset:hover, .calc-preset.is-active { border-color: var(--bronze); background: var(--ivory-2); }
+</style>
+
+<script>
+  import { calcPrice } from '../data/pricing';
+  import { submitLead } from '../lib/lead';
+
+  const STEP_LABELS = ['Тип объекта', 'Площадь', 'Формат', 'Состояние', 'Контакты'];
+  const TOTAL = 5;
+
+  document.querySelectorAll<HTMLElement>('[data-calc]').forEach((root) => {
+    const state: { step: number; type?: string; area?: number; format?: string; condition?: string } = { step: 1 };
+
+    const $ = <T extends Element = HTMLElement>(sel: string) => root.querySelector<T>(sel);
+    const progress = $('[data-progress]') as HTMLElement;
+    const curEl = $('[data-cur]') as HTMLElement;
+    const stepLabel = $('[data-step-label]') as HTMLElement;
+    const backBtn = $('[data-back]') as HTMLButtonElement;
+    const nextBtn = $('[data-next]') as HTMLButtonElement;
+    const nav = $('[data-nav]') as HTMLElement;
+    const areaInput = $('[data-area]') as HTMLInputElement;
+
+    const stepEls = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
+
+    // --- выбор опций (тип/формат/состояние) ---
+    root.querySelectorAll<HTMLButtonElement>('.calc-opt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const group = btn.dataset.group as 'type' | 'format' | 'condition';
+        const value = btn.dataset.value!;
+        root.querySelectorAll(`.calc-opt[data-group="${group}"]`).forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        state[group] = value;
+        refreshNext();
+      });
+    });
+
+    // --- площадь ---
+    const setArea = (val: number) => {
+      state.area = val > 0 ? val : undefined;
+      refreshNext();
+    };
+    areaInput?.addEventListener('input', () => setArea(parseInt(areaInput.value, 10)));
+    root.querySelectorAll<HTMLButtonElement>('.calc-preset').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const val = parseInt(btn.dataset.preset!, 10);
+        areaInput.value = String(val);
+        root.querySelectorAll('.calc-preset').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        setArea(val);
+      });
+    });
+
+    // --- валидность текущего шага ---
+    function stepValid(step: number): boolean {
+      switch (step) {
+        case 1: return !!state.type;
+        case 2: return !!state.area && state.area > 0;
+        case 3: return !!state.format;
+        case 4: return !!state.condition;
+        default: return true;
+      }
+    }
+    function refreshNext() {
+      nextBtn.disabled = !stepValid(state.step);
+    }
+
+    // --- переход между шагами ---
+    function render() {
+      stepEls.forEach((el) => {
+        el.hidden = el.dataset.step !== String(state.step);
+      });
+      progress.style.width = `${(state.step / TOTAL) * 100}%`;
+      curEl.textContent = String(state.step);
+      stepLabel.textContent = STEP_LABELS[state.step - 1];
+      backBtn.disabled = state.step === 1;
+      // на шаге 5 прячем навигацию (отправка внутри формы)
+      nav.style.display = state.step === TOTAL ? 'none' : '';
+      refreshNext();
+    }
+
+    // Вилку не показываем клиенту, но считаем и отправляем в заявку (менеджеру)
+    function currentRange() {
+      return calcPrice({ type: state.type, area: state.area, format: state.format, condition: state.condition });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (!stepValid(state.step)) return;
+      if (state.step < TOTAL) { state.step += 1; render(); }
+    });
+    backBtn.addEventListener('click', () => {
+      if (state.step > 1) { state.step -= 1; render(); }
+    });
+
+    // --- маска телефона ---
+    const form = $('[data-calc-form]') as HTMLFormElement;
+    const phoneInput = form.querySelector<HTMLInputElement>('input[name="phone"]')!;
+    const nameInput = form.querySelector<HTMLInputElement>('input[name="name"]')!;
+    const consent = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
+    const hp = form.querySelector<HTMLInputElement>('input[name="company"]')!;
+    const errEl = $('[data-calc-error]') as HTMLElement;
+    const submitBtn = $('[data-calc-submit]') as HTMLButtonElement;
+    const spinner = $('[data-spinner]') as HTMLElement;
+
+    function maskPhone(value: string): string {
+      let d = value.replace(/\D/g, '');
+      if (d.startsWith('8')) d = '7' + d.slice(1);
+      if (!d.startsWith('7')) d = '7' + d;
+      d = d.slice(0, 11);
+      const p = d.slice(1);
+      let out = '+7';
+      if (p.length > 0) out += ' (' + p.slice(0, 3);
+      if (p.length >= 3) out += ') ' + p.slice(3, 6);
+      if (p.length >= 6) out += '-' + p.slice(6, 8);
+      if (p.length >= 8) out += '-' + p.slice(8, 10);
+      return out;
+    }
+    phoneInput.addEventListener('input', () => {
+      phoneInput.value = maskPhone(phoneInput.value);
+    });
+    phoneInput.addEventListener('focus', () => {
+      if (!phoneInput.value) phoneInput.value = '+7 (';
+    });
+
+    function showError(msg: string) {
+      errEl.textContent = msg;
+      errEl.classList.remove('hidden');
+    }
+    function clearError() {
+      errEl.classList.add('hidden');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const name = nameInput.value.trim();
+      const phoneDigits = phoneInput.value.replace(/\D/g, '');
+      if (name.length < 2) return showError('Укажите имя');
+      if (phoneDigits.length < 11) return showError('Введите корректный телефон');
+      if (!consent.checked) return showError('Нужно согласие на обработку данных');
+
+      submitBtn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      const r = currentRange();
+      const res = await submitLead({
+        name,
+        phone: phoneInput.value,
+        formType: 'Калькулятор',
+        source: 'calc',
+        honeypot: hp.value,
+        quizData: {
+          type: state.type,
+          area: state.area,
+          format: state.format,
+          condition: state.condition,
+          priceFrom: r?.from,
+          priceTo: r?.to,
+        },
+      });
+
+      if (res.ok) {
+        window.location.assign('/spasibo');
+      } else {
+        submitBtn.disabled = false;
+        spinner.classList.add('hidden');
+        showError(res.error === 'rate_limited' ? 'Слишком часто. Попробуйте через несколько секунд.' : 'Не удалось отправить. Позвоните нам или попробуйте ещё раз.');
+      }
+    });
+
+    render();
+  });
+</script>

@@ -1,0 +1,37 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Section from '../components/Section.astro';
+import { site } from '../data/site';
+
+const rows: [string, string][] = [
+  ['Наименование', site.legalName],
+  ['ИНН', site.requisites.inn],
+  ['ОГРНИП', site.requisites.ogrnip],
+  ['Телефон', site.phone],
+  ['E-mail', site.email],
+  ['Банк', site.requisites.bank],
+  ['БИК', site.requisites.bik],
+  ['Корр. счёт', site.requisites.corr],
+  ['Расчётный счёт', site.requisites.account],
+];
+---
+
+<SiteLayout title="Реквизиты — SDANO" description="Реквизиты ИП Львов Валерий Вадимович (SDANO), Пермь." path="/rekvizity">
+  <PageHero eyebrow="Правовая информация" title="Реквизиты" subtitle="Полные реквизиты индивидуального предпринимателя." />
+  <Section bg="ivory" narrow>
+    <div class="overflow-hidden rounded-card border border-line bg-paper">
+      <table class="w-full text-sm">
+        <tbody>
+          {rows.map(([k, v], i) => (
+            <tr class={i % 2 ? 'bg-ivory-2/50' : ''}>
+              <td class="w-2/5 px-5 py-3 align-top text-muted-2">{k}</td>
+              <td class="px-5 py-3 font-medium text-ink">{v}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-xs text-muted-2">ОГРНИП уточняется по договору — проверить перед публикацией.</p>
+  </Section>
+</SiteLayout>

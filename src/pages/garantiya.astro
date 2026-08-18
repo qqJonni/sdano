@@ -1,0 +1,30 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+
+const points = [
+  ['Гарантия 3 года', 'На все выполненные работы. Гарантийные случаи устраняем бесплатно.'],
+  ['Договор', 'Объём, сроки, стоимость и обязательства сторон закреплены документально.'],
+  ['Фиксированная смета', 'Цена не растёт по ходу работ без изменения объёма с вашей стороны.'],
+  ['Акт приёмки', 'Сдаём объект по акту, с проверкой каждого этапа.'],
+];
+---
+
+<SiteLayout title="Гарантия и договор — SDANO" description="Гарантия 3 года на ремонт, работа по договору с фиксированной сметой в Перми." path="/garantiya">
+  <PageHero eyebrow="Гарантия" title="Гарантия и договор" subtitle="Защищаем ваш ремонт документально: договор, фиксированная смета и гарантия 3 года." />
+  <Section bg="ivory">
+    <div class="grid gap-6 sm:grid-cols-2">
+      {points.map(([t, d]) => (
+        <div class="rounded-card border border-line bg-paper p-6">
+          <h3 class="text-h3">{t}</h3>
+          <p class="mt-2 text-sm text-muted-2">{d}</p>
+        </div>
+      ))}
+    </div>
+    <div class="mt-10">
+      <Button href="/#calc" variant="primary">Рассчитать стоимость</Button>
+    </div>
+  </Section>
+</SiteLayout>

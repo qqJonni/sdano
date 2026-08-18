@@ -1,0 +1,15 @@
+---
+export interface Props {
+  as?: string;
+  class?: string;
+  /** узкий контейнер для текстовых страниц */
+  narrow?: boolean;
+}
+
+const { as: Tag = 'div', class: className = '', narrow = false } = Astro.props;
+const max = narrow ? 'max-w-3xl' : 'max-w-[1200px]';
+---
+
+<Tag class:list={['mx-auto w-full px-5 md:px-8', max, className]}>
+  <slot />
+</Tag>

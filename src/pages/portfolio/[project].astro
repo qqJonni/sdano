@@ -1,0 +1,45 @@
+---
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import { projects } from '../../data/projects';
+
+export const getStaticPaths = (() => {
+  return projects.map((project) => ({
+    params: { project: project.slug },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+---
+
+<SiteLayout
+  title={`${project.title} — портфолио SDANO`}
+  description={project.summary}
+  path={`/portfolio/${project.slug}`}
+>
+  <PageHero eyebrow="Объект портфолио" title={project.title} subtitle={`${project.format} · ${project.area} · ${project.district} · ${project.duration}`} />
+  <Section bg="ivory">
+    <div class="grid gap-8 lg:grid-cols-2">
+      <figure>
+        <img src={project.before} alt="До ремонта" loading="lazy" class="w-full rounded-card border border-line" />
+        <figcaption class="mt-2 text-sm text-muted-2">До</figcaption>
+      </figure>
+      <figure>
+        <img src={project.after} alt="После ремонта" loading="lazy" class="w-full rounded-card border border-line" />
+        <figcaption class="mt-2 text-sm text-muted-2">После</figcaption>
+      </figure>
+    </div>
+    <div class="mt-10 max-w-prose">
+      <h2>Об объекте</h2>
+      <p class="mt-3 text-muted-2">{project.summary}</p>
+    </div>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <Button href="/#calc" variant="primary">Рассчитать похожий ремонт</Button>
+      <Button href="/portfolio" variant="secondary">Все объекты</Button>
+    </div>
+  </Section>
+</SiteLayout>

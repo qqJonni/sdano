@@ -1,0 +1,30 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Section from '../components/Section.astro';
+import { site } from '../data/site';
+---
+
+<SiteLayout title="Политика обработки персональных данных — SDANO" description="Политика обработки персональных данных SDANO." path="/politika" noindex>
+  <PageHero eyebrow="Правовая информация" title="Политика обработки персональных данных" />
+  <Section bg="ivory" narrow>
+    <div class="prose-links max-w-prose space-y-4 text-muted-2">
+      <p class="text-ink">
+        Настоящая политика описывает порядок обработки персональных данных пользователей
+        сайта {site.name} ({site.legalName}).
+      </p>
+      <p>
+        Это текст-заглушка. Финальная редакция политики в соответствии с 152-ФЗ будет
+        добавлена позже (TODO). Данные оператора и реквизиты — из раздела контактов.
+      </p>
+      <h2 class="text-ink">1. Общие положения</h2>
+      <p>Заполнить.</p>
+      <h2 class="text-ink">2. Какие данные обрабатываются</h2>
+      <p>Заполнить.</p>
+      <h2 class="text-ink">3. Цели обработки</h2>
+      <p>Заполнить.</p>
+      <h2 class="text-ink">4. Права субъекта персональных данных</h2>
+      <p>Заполнить.</p>
+    </div>
+  </Section>
+</SiteLayout>

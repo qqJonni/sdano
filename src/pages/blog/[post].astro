@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import { posts } from '../../data/posts';
+
+export const getStaticPaths = (() => {
+  return posts.map((post) => ({
+    params: { post: post.slug },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const fmt = (iso: string) => new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<SiteLayout title={`${post.title} — блог SDANO`} description={post.excerpt} path={`/blog/${post.slug}`}>
+  <PageHero eyebrow={`${fmt(post.date)} · ${post.readingTime}`} title={post.title} />
+  <Section bg="ivory" narrow>
+    <div class="prose-links max-w-prose space-y-4 text-muted-2">
+      {post.body.map((p) => <p>{p}</p>)}
+    </div>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <Button href="/#calc" variant="primary">Рассчитать ремонт</Button>
+      <Button href="/blog" variant="secondary">Все статьи</Button>
+    </div>
+  </Section>
+</SiteLayout>

@@ -1,0 +1,25 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+---
+
+<SiteLayout title="О компании — SDANO" description="SDANO — 20 лет опыта ремонта в Перми, 450+ объектов. Работаем по договору с гарантией." path="/o-kompanii">
+  <PageHero eyebrow="О компании" title="20 лет делаем ремонт в Перми" subtitle="Более 450 сданных объектов — от студий до загородных домов. Предсказуемый процесс и ответственность по договору." />
+  <Section bg="ivory">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div class="prose-links max-w-prose space-y-4 text-muted-2">
+        <p class="text-lead text-ink">Мы строим ремонт как понятный процесс, а не как лотерею.</p>
+        <p>Здесь будет история компании, ценности и подход к работе. Пока текст-заглушка.</p>
+        <p>Один прораб ведёт объект от замера до сдачи ключей. Все этапы — с фотоотчётами и приёмкой.</p>
+      </div>
+      <div class="aspect-[4/3] rounded-card border border-line bg-ivory-2 grid place-items-center">
+        <span class="text-muted-2 text-sm">Фото команды / объекта</span>
+      </div>
+    </div>
+    <div class="mt-10">
+      <Button href="/#calc" variant="primary">Рассчитать ремонт</Button>
+    </div>
+  </Section>
+</SiteLayout>

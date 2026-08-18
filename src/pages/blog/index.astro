@@ -1,0 +1,25 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import { posts } from '../../data/posts';
+
+const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+const fmt = (iso: string) => new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<SiteLayout title="Блог о ремонте — SDANO" description="Статьи о ремонте квартир и домов: цены, этапы, советы. Блог SDANO, Пермь." path="/blog">
+  <PageHero eyebrow="Блог" title="Полезное о ремонте" subtitle="Разбираем цены, этапы и типичные ошибки — чтобы ремонт был предсказуемым." />
+  <Section bg="ivory">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {sorted.map((post) => (
+        <a href={`/blog/${post.slug}`} class="group flex flex-col rounded-card border border-line bg-paper p-6 transition-transform duration-200 hover:-translate-y-1">
+          <div class="text-xs text-muted-2">{fmt(post.date)} · {post.readingTime}</div>
+          <h3 class="mt-2 text-h3 group-hover:text-bronze transition-colors">{post.title}</h3>
+          <p class="mt-2 flex-1 text-sm text-muted-2">{post.excerpt}</p>
+          <span class="mt-4 text-sm font-semibold text-ink underline decoration-bronze decoration-2 underline-offset-[6px]">Читать</span>
+        </a>
+      ))}
+    </div>
+  </Section>
+</SiteLayout>

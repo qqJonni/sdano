@@ -1,0 +1,21 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+---
+
+<SiteLayout title="Страница не найдена — SDANO" description="Страница не найдена" path="/404" noindex>
+  <Section bg="ivory" class="min-h-[60vh] grid place-items-center text-center">
+    <div class="max-w-xl">
+      <div class="font-display text-7xl text-bronze">404</div>
+      <h1 class="mt-4">Страница не найдена</h1>
+      <p class="mt-4 text-lead text-muted-2">
+        Возможно, страница была перемещена или её никогда не существовало.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <Button href="/" variant="primary">На главную</Button>
+        <Button href="/portfolio" variant="secondary">Портфолио</Button>
+      </div>
+    </div>
+  </Section>
+</SiteLayout>

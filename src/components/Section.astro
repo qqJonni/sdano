@@ -1,0 +1,65 @@
+---
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+
+export interface Props {
+  /** фон секции */
+  bg?: 'ivory' | 'ivory-2' | 'paper' | 'green' | 'green-2' | 'ink';
+  id?: string;
+  title?: string;
+  eyebrow?: string;
+  headingAs?: 'h1' | 'h2' | 'h3';
+  align?: 'left' | 'center';
+  narrow?: boolean;
+  class?: string;
+  /** вертикальные отступы */
+  py?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  bg = 'ivory',
+  id,
+  title,
+  eyebrow,
+  headingAs = 'h2',
+  align = 'left',
+  narrow = false,
+  class: className = '',
+  py = 'lg',
+} = Astro.props;
+
+const bgMap: Record<string, string> = {
+  ivory: 'bg-ivory',
+  'ivory-2': 'bg-ivory-2',
+  paper: 'bg-paper',
+  green: 'bg-green section-dark',
+  'green-2': 'bg-green-2 section-dark',
+  ink: 'bg-ink section-dark',
+};
+
+const isDark = bg === 'green' || bg === 'green-2' || bg === 'ink';
+
+const pyMap = {
+  sm: 'py-10 md:py-14',
+  md: 'py-14 md:py-20',
+  lg: 'py-16 md:py-24',
+};
+---
+
+<section id={id} class:list={[bgMap[bg], pyMap[py], className]}>
+  <Container narrow={narrow}>
+    {
+      title && (
+        <SectionHeading
+          title={title}
+          eyebrow={eyebrow}
+          as={headingAs}
+          align={align}
+          dark={isDark}
+          class="mb-10 md:mb-12"
+        />
+      )
+    }
+    <slot />
+  </Container>
+</section>

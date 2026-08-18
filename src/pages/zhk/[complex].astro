@@ -1,0 +1,37 @@
+---
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import { complexes } from '../../data/complexes';
+
+export const getStaticPaths = (() => {
+  return complexes.map((complex) => ({
+    params: { complex: complex.slug },
+    props: { complex },
+  }));
+}) satisfies GetStaticPaths;
+
+const { complex } = Astro.props;
+---
+
+<SiteLayout
+  title={`Ремонт в ${complex.name} — SDANO, Пермь`}
+  description={complex.intro}
+  path={`/zhk/${complex.slug}`}
+>
+  <PageHero eyebrow="Ремонт в ЖК" title={`Ремонт квартир в ${complex.name}`} subtitle={`${complex.district}. ${complex.intro}`} />
+  <Section bg="ivory" narrow>
+    <div class="prose-links max-w-prose space-y-4 text-muted-2">
+      <p class="text-lead text-ink">{complex.intro}</p>
+      <p>
+        Посадочная страница-заглушка под ЖК. Здесь будут типовые планировки, цены под
+        дом, примеры работ и форма заявки. Пока — «рыба».
+      </p>
+    </div>
+    <div class="mt-8">
+      <Button href="/#calc" variant="primary">Рассчитать стоимость</Button>
+    </div>
+  </Section>
+</SiteLayout>

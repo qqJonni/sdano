@@ -1,0 +1,60 @@
+---
+export interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'md' | 'lg';
+  type?: 'button' | 'submit';
+  class?: string;
+  /** для кнопок-заглушек и внешних ссылок */
+  target?: string;
+  rel?: string;
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  target,
+  rel,
+  ariaLabel,
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-btn font-sans font-bold tracking-tight ' +
+  'transition-all duration-200 ease-premium select-none whitespace-nowrap ' +
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bronze';
+
+const sizes = {
+  md: 'text-[15px] px-5 py-3',
+  lg: 'text-base px-7 py-4',
+};
+
+const variants = {
+  // фон bronze, текст ink
+  primary:
+    'bg-bronze text-ink hover:brightness-[1.06] hover:-translate-y-[1px] active:translate-y-0 shadow-[0_10px_24px_-14px_rgba(199,161,107,0.9)]',
+  // контурная/подчёркнутая
+  secondary:
+    'bg-transparent text-ink border border-line hover:border-bronze hover:text-ink underline decoration-bronze decoration-2 underline-offset-[6px]',
+  // на тёмном фоне
+  ghost:
+    'bg-transparent text-ivory border border-ivory/25 hover:border-bronze hover:text-bronze',
+};
+
+const cls = [base, sizes[size], variants[variant], className];
+---
+
+{
+  href ? (
+    <a href={href} class:list={cls} target={target} rel={rel} aria-label={ariaLabel}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class:list={cls} aria-label={ariaLabel}>
+      <slot />
+    </button>
+  )
+}

@@ -1,0 +1,146 @@
+---
+// Единый компонент формы заявки. Поля: имя + телефон + honeypot + согласие.
+// Логика — общий скрипт ниже (обрабатывает все формы на странице).
+export interface Props {
+  formType: string; // 'Обратный звонок' | 'Форма сметы' | ...
+  source?: string;
+  layout?: 'stack' | 'inline'; // inline — имя/телефон в строку (десктоп)
+  submitLabel?: string;
+  compact?: boolean; // короткий вариант (подвал/контакты)
+  dark?: boolean; // на тёмном фоне
+  class?: string;
+}
+
+const {
+  formType,
+  source = '',
+  layout = 'stack',
+  submitLabel = 'Отправить заявку',
+  compact = false,
+  dark = false,
+  class: className = '',
+} = Astro.props;
+
+const fieldBase = dark
+  ? 'rounded-btn border border-ivory/15 bg-green px-4 py-3 text-ivory placeholder:text-ivory/40 focus:border-bronze focus:outline-none'
+  : 'rounded-btn border border-line bg-ivory px-4 py-3 text-ink placeholder:text-muted focus:border-bronze focus:outline-none';
+const consentText = dark ? 'text-ivory/60' : 'text-muted-2';
+---
+
+<form
+  data-lead-form
+  data-form-type={formType}
+  data-source={source}
+  class:list={['flex flex-col gap-3', className]}
+  novalidate
+>
+  <div class:list={[layout === 'inline' ? 'flex flex-col gap-3 sm:flex-row' : 'flex flex-col gap-3']}>
+    <input type="text" name="name" placeholder="Имя" autocomplete="name" class:list={['flex-1', fieldBase]} />
+    <input type="tel" name="phone" inputmode="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel" class:list={['flex-1', fieldBase]} />
+    {layout === 'inline' && (
+      <button type="submit" data-submit
+        class="inline-flex items-center justify-center gap-2 rounded-btn bg-bronze px-6 py-3 font-bold text-ink transition-all duration-200 ease-premium hover:brightness-105 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap">
+        <span data-submit-text>{submitLabel}</span>
+        <svg data-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity="0.25"/>
+          <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </button>
+    )}
+  </div>
+
+  <!-- honeypot -->
+  <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute left-[-9999px] h-0 w-0 opacity-0" />
+
+  {!compact && (
+    <label class:list={['flex items-start gap-2.5 text-sm', consentText]}>
+      <input type="checkbox" name="consent" class="mt-0.5 h-4 w-4 accent-[color:var(--green)]" />
+      <span>Согласен с <a href="/politika" class="underline decoration-bronze underline-offset-2 hover:text-bronze">политикой обработки персональных данных</a></span>
+    </label>
+  )}
+  {compact && (
+    <input type="checkbox" name="consent" checked class="hidden" aria-hidden="true" />
+  )}
+
+  <p data-error class:list={['hidden text-sm', dark ? 'text-red-300' : 'text-red-600']}></p>
+
+  {layout !== 'inline' && (
+    <button type="submit" data-submit
+      class="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-btn bg-bronze px-6 py-4 font-bold text-ink transition-all duration-200 ease-premium hover:brightness-105 disabled:opacity-60 disabled:cursor-not-allowed">
+      <span data-submit-text>{submitLabel}</span>
+      <svg data-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity="0.25"/>
+        <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </button>
+  )}
+
+  {compact && (
+    <p class:list={['text-xs', consentText]}>
+      Нажимая кнопку, вы соглашаетесь с <a href="/politika" class="underline decoration-bronze underline-offset-2">политикой ПД</a>.
+    </p>
+  )}
+</form>
+
+<script>
+  import { submitLead } from '../lib/lead';
+
+  function maskPhone(value: string): string {
+    let d = value.replace(/\D/g, '');
+    if (d.startsWith('8')) d = '7' + d.slice(1);
+    if (!d.startsWith('7')) d = '7' + d;
+    d = d.slice(0, 11);
+    const p = d.slice(1);
+    let out = '+7';
+    if (p.length > 0) out += ' (' + p.slice(0, 3);
+    if (p.length >= 3) out += ') ' + p.slice(3, 6);
+    if (p.length >= 6) out += '-' + p.slice(6, 8);
+    if (p.length >= 8) out += '-' + p.slice(8, 10);
+    return out;
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-lead-form]').forEach((form) => {
+    const nameInput = form.querySelector<HTMLInputElement>('input[name="name"]')!;
+    const phoneInput = form.querySelector<HTMLInputElement>('input[name="phone"]')!;
+    const consent = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
+    const hp = form.querySelector<HTMLInputElement>('input[name="company"]')!;
+    const errEl = form.querySelector<HTMLElement>('[data-error]')!;
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const spinner = form.querySelector<HTMLElement>('[data-spinner]');
+
+    phoneInput.addEventListener('input', () => { phoneInput.value = maskPhone(phoneInput.value); });
+    phoneInput.addEventListener('focus', () => { if (!phoneInput.value) phoneInput.value = '+7 ('; });
+
+    const showError = (m: string) => { errEl.textContent = m; errEl.classList.remove('hidden'); };
+    const clearError = () => errEl.classList.add('hidden');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const name = nameInput.value.trim();
+      const phoneDigits = phoneInput.value.replace(/\D/g, '');
+      if (name.length < 2) return showError('Укажите имя');
+      if (phoneDigits.length < 11) return showError('Введите корректный телефон');
+      if (!consent.checked) return showError('Нужно согласие на обработку данных');
+
+      submitBtn.disabled = true;
+      spinner?.classList.remove('hidden');
+
+      const res = await submitLead({
+        name,
+        phone: phoneInput.value,
+        formType: form.dataset.formType || 'Заявка',
+        source: form.dataset.source || '',
+        honeypot: hp.value,
+      });
+
+      if (res.ok) {
+        window.location.assign('/spasibo');
+      } else {
+        submitBtn.disabled = false;
+        spinner?.classList.add('hidden');
+        showError(res.error === 'rate_limited' ? 'Слишком часто. Попробуйте через несколько секунд.' : 'Не удалось отправить. Позвоните нам или попробуйте ещё раз.');
+      }
+    });
+  });
+</script>

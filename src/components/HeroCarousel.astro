@@ -1,0 +1,198 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// 3D-карусель фото (coverflow): тянется мышкой и пальцем, центральное фото чёткое,
+// боковые уменьшаются, размываются и уходят на задний план.
+// Все изображения из src/assets/hero/ подтягиваются автоматически (glob),
+// достаточно положить новый файл в папку — правок кода не нужно.
+const heroModules = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/hero/*.{jpeg,jpg,JPG,JPEG,png,webp,avif}',
+  { eager: true }
+);
+
+const slides = Object.entries(heroModules)
+  // стабильный порядок по имени файла (hero1, hero2, …)
+  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([, mod]) => mod.default);
+---
+
+<div class="hcf" data-hcarousel>
+  <div class="hcf__viewport" data-viewport>
+    {
+      slides.map((img, i) => (
+        <div class="hcf__card" data-i={i}>
+          <Image
+            src={img}
+            alt={`Интерьер после ремонта — SDANO, фото ${i + 1}`}
+            widths={[360, 560, 760]}
+            sizes="(min-width: 1024px) 40vw, 90vw"
+            loading="lazy"
+            class="hcf__img"
+          />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="hcf__ui">
+    <button type="button" class="hcf__nav" data-prev aria-label="Предыдущее фото">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="hcf__nav" data-next aria-label="Следующее фото">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .hcf { position: relative; width: 100%; }
+
+  .hcf__viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    perspective: 1500px;
+    touch-action: pan-y;            /* вертикальный скролл страницы не блокируем */
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .hcf.is-dragging .hcf__viewport { cursor: grabbing; }
+
+  .hcf__card {
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(246, 243, 238, 0.14);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+    transform-style: preserve-3d;
+    will-change: transform, opacity, filter;
+    /* переходами управляет JS покарточно (нужно для бесшовного цикла) */
+  }
+
+  .hcf__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  .hcf__ui {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+  .hcf__nav {
+    display: grid;
+    place-items: center;
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(246, 243, 238, 0.25);
+    color: var(--ivory);
+    background: transparent;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .hcf__nav:hover { border-color: var(--bronze); color: var(--bronze); }
+  .hcf__nav svg { width: 20px; height: 20px; }
+
+</style>
+
+<script>
+  const TRANS = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, filter 0.5s ease';
+
+  document.querySelectorAll<HTMLElement>('[data-hcarousel]').forEach((root) => {
+    const viewport = root.querySelector<HTMLElement>('[data-viewport]')!;
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('.hcf__card'));
+    const n = cards.length;
+    const HALF = n / 2;
+
+    // шаг (px) пропорционален ширине области — карусель адаптивная
+    const step = () => viewport.clientWidth * 0.46;
+
+    // кольцевое смещение: кратчайшее расстояние от карточки до центра по кругу
+    const wrapOff = (raw: number) => raw - n * Math.round(raw / n);
+
+    // случайное стартовое фото при каждой загрузке страницы
+    let pos = Math.floor(Math.random() * n);
+    const lastOff = cards.map((_, i) => wrapOff(i - pos));
+
+    function render(animate: boolean) {
+      const g = step();
+      cards.forEach((card, i) => {
+        const off = wrapOff(i - pos);
+        // карточка «перескочила» через шов за спиной — телепортируем без анимации
+        const jumped = Math.abs(off - lastOff[i]) > HALF;
+        card.style.transition = animate && !jumped ? TRANS : 'none';
+
+        const a = Math.abs(off);
+        const tx = off * g;
+        const rot = -off * 14;
+        const sc = Math.max(0.76, 1 - a * 0.14);
+        const tz = -a * 150;
+        card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rot}deg) scale(${sc})`;
+        // видим центр + по одному соседу; на ±2 уже прозрачно (там же и телепорт через шов)
+        card.style.opacity = String(Math.max(0, 1 - a * 0.5));
+        card.style.filter = a < 0.5 ? 'none' : `blur(${Math.min(4, a * 2.5)}px)`;
+        card.style.zIndex = String(100 - Math.round(a * 10));
+        lastOff[i] = off;
+      });
+    }
+
+    function snapTo(p: number) {
+      pos = Math.round(p);
+      render(true);
+    }
+
+    // --- drag: мышь + палец (pointer events) ---
+    let dragging = false;
+    let startX = 0;
+    let startPos = 0;
+    let moved = false;
+
+    viewport.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startPos = pos;
+      viewport.setPointerCapture(e.pointerId);
+    });
+    viewport.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      pos = startPos - dx / step();
+      render(false);
+    });
+    const endDrag = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      try { viewport.releasePointerCapture(e.pointerId); } catch {}
+      snapTo(pos);
+    };
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+
+    // клик по боковому фото — центрируем его кратчайшим путём (если это не был drag)
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        if (moved) return;
+        const off = wrapOff(i - pos);
+        if (off !== 0) snapTo(pos + off);
+      });
+    });
+
+    root.querySelector('[data-prev]')?.addEventListener('click', () => snapTo(pos - 1));
+    root.querySelector('[data-next]')?.addEventListener('click', () => snapTo(pos + 1));
+
+    window.addEventListener('resize', () => render(false));
+    render(false);
+  });
+</script>

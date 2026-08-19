@@ -5,6 +5,7 @@ import Container from '../components/Container.astro';
 import Button from '../components/Button.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Calculator from '../components/Calculator.astro';
+import HeroCarousel from '../components/HeroCarousel.astro';
 import LeadForm from '../components/LeadForm.astro';
 import CallbackForm from '../components/CallbackForm.astro';
 import { services } from '../data/services';
@@ -95,11 +96,9 @@ const faq = [
           <span>✓ Гарантия 3 года</span>
         </div>
       </div>
-      <!-- Место под фото -->
+      <!-- Фото интерьера — 3D-карусель -->
       <div class="lg:col-span-6">
-        <div class="aspect-[4/3] w-full rounded-card border border-ivory/15 bg-green-2 grid place-items-center">
-          <span class="text-ivory/40 text-sm">Место под фото интерьера</span>
-        </div>
+        <HeroCarousel />
       </div>
     </Container>
   </section>

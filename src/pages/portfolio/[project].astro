@@ -1,10 +1,14 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Section from '../../components/Section.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
 import Button from '../../components/Button.astro';
+import LeadForm from '../../components/LeadForm.astro';
 import { projects } from '../../data/projects';
+import { getProjectPhotos } from '../../lib/portfolioPhotos';
 
 export const getStaticPaths = (() => {
   return projects.map((project) => ({
@@ -14,6 +18,35 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths;
 
 const { project } = Astro.props;
+// фото объекта из src/assets/portfolio/<slug>/ (авто-подтягивание)
+const photos = getProjectPhotos(project.slug);
+
+// Описание по зонам: если в папке объекта есть description.md — показываем его
+// (заголовки-зоны + фото + текст, как у Domeo). Иначе — простая галерея.
+const descMods = import.meta.glob('../../assets/portfolio/*/description.md', { eager: true });
+const descKey = Object.keys(descMods).find((p) => p.includes(`/portfolio/${project.slug}/`));
+const Description = descKey ? (descMods[descKey] as { Content: any }).Content : null;
+
+// Иконки характеристик (stroke=currentColor, красятся родителем)
+const icons = {
+  area: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5"/></svg>',
+  rooms: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M14 9h6a1 1 0 0 1 1 1v11M3 21h18M10 12v.01"/></svg>',
+  place: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.686-7-11a7 7 0 1 1 14 0c0 5.314-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  style: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg>',
+  format: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1-5 5L5 16v3h3l4.7-4.7a4 4 0 0 0 5-5l-2.3 2.3-2-2 2.3-2.3Z"/></svg>',
+  duration: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+};
+
+const location = project.complex ?? project.district;
+
+const meta = [
+  { icon: icons.area, label: 'Площадь', value: project.area },
+  project.rooms && { icon: icons.rooms, label: 'Комнаты', value: project.rooms },
+  location && { icon: icons.place, label: 'Адрес', value: location },
+  project.style && { icon: icons.style, label: 'Стиль', value: project.style },
+  { icon: icons.format, label: 'Формат', value: project.format },
+  { icon: icons.duration, label: 'Срок', value: project.duration },
+].filter(Boolean) as { icon: string; label: string; value: string }[];
 ---
 
 <SiteLayout
@@ -21,25 +54,237 @@ const { project } = Astro.props;
   description={project.summary}
   path={`/portfolio/${project.slug}`}
 >
-  <PageHero eyebrow="Объект портфолио" title={project.title} subtitle={`${project.format} · ${project.area} · ${project.district} · ${project.duration}`} />
+  <PageHero eyebrow="Объект портфолио" title={project.title} subtitle={project.summary} />
+
   <Section bg="ivory">
-    <div class="grid gap-8 lg:grid-cols-2">
-      <figure>
-        <img src={project.before} alt="До ремонта" loading="lazy" class="w-full rounded-card border border-line" />
-        <figcaption class="mt-2 text-sm text-muted-2">До</figcaption>
-      </figure>
-      <figure>
-        <img src={project.after} alt="После ремонта" loading="lazy" class="w-full rounded-card border border-line" />
-        <figcaption class="mt-2 text-sm text-muted-2">После</figcaption>
-      </figure>
+    <!-- Характеристики объекта -->
+    <div class="mb-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
+      {
+        meta.map((m) => (
+          <div class="flex items-start gap-3">
+            <span class="mt-0.5 text-bronze" set:html={m.icon} />
+            <div>
+              <div class="text-xs uppercase tracking-[0.12em] text-muted-2">{m.label}</div>
+              <div class="mt-0.5 font-semibold text-ink">{m.value}</div>
+            </div>
+          </div>
+        ))
+      }
     </div>
-    <div class="mt-10 max-w-prose">
-      <h2>Об объекте</h2>
-      <p class="mt-3 text-muted-2">{project.summary}</p>
+
+    {
+      Description ? (
+        <!-- Описание по зонам из description.md -->
+        <div class="pf-prose" data-zoomable>
+          <Description />
+        </div>
+      ) : photos.length > 0 ? (
+        <!-- Галерея фото объекта (если описания нет) -->
+        <div class="grid gap-5 sm:grid-cols-2" data-zoomable>
+          {photos.map((img, i) => (
+            <Image
+              src={img}
+              alt={`${project.title} — фото ${i + 1}`}
+              widths={[400, 800, 1200]}
+              sizes={i === 0 ? '(min-width: 1024px) 1100px, 100vw' : '(min-width: 640px) 50vw, 100vw'}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              class:list={[
+                'w-full rounded-card border border-line object-cover',
+                i === 0 && 'sm:col-span-2 aspect-[16/9]',
+              ]}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="grid aspect-[16/9] place-items-center rounded-card border border-line bg-ivory-2 text-center">
+          <span class="text-sm text-muted-2">
+            Фото объекта появятся здесь<br />
+            (добавьте файлы в <code>src/assets/portfolio/{project.slug}/</code>)
+          </span>
+        </div>
+      )
+    }
+  </Section>
+
+  <!-- Форма заявки -->
+  <Section bg="ivory-2">
+    <div class="rounded-card border border-line bg-paper p-8 md:p-12 grid gap-8 lg:grid-cols-2 lg:items-center">
+      <div>
+        <SectionHeading title="Хочу такой же ремонт" eyebrow="Обсудим ваш объект" />
+        <p class="mt-5 max-w-md text-muted-2">
+          Оставьте контакты — рассчитаем стоимость под вашу площадь и планировку,
+          предложим удобное время для замера.
+        </p>
+      </div>
+      <LeadForm formType="Форма сметы" source={`portfolio-${project.slug}`} submitLabel="Получить расчёт" />
     </div>
-    <div class="mt-10 flex flex-wrap gap-4">
-      <Button href="/#calc" variant="primary">Рассчитать похожий ремонт</Button>
+    <div class="mt-8">
       <Button href="/portfolio" variant="secondary">Все объекты</Button>
     </div>
   </Section>
+
+  <!-- Лайтбокс (увеличение фото) -->
+  <div id="lightbox" class="lb" hidden aria-hidden="true">
+    <button type="button" class="lb__close" data-lb-close aria-label="Закрыть">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button type="button" class="lb__nav lb__nav--prev" data-lb-prev aria-label="Предыдущее фото">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <img class="lb__img" data-lb-img alt="" />
+    <button type="button" class="lb__nav lb__nav--next" data-lb-next aria-label="Следующее фото">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
 </SiteLayout>
+
+<style is:global>
+  /* Описание объекта по зонам (markdown из description.md) */
+  .pf-prose { max-width: none; }
+  .pf-prose h2 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    color: var(--ink);
+    margin: 2.75rem 0 1rem;
+  }
+  .pf-prose > :first-child { margin-top: 0; }
+  .pf-prose h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.375rem;
+    color: var(--ink);
+    margin: 1.75rem 0 0.75rem;
+  }
+  /* Текст — на всю ширину блока */
+  .pf-prose p {
+    color: var(--muted);
+    line-height: 1.75;
+    margin: 0 0 1rem;
+  }
+  /* Одиночное фото — во всю ширину */
+  .pf-prose img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    margin: 0.5rem 0 1.75rem;
+    display: block;
+  }
+  /* Несколько фото подряд (без пустой строки) — ряд одинаковой высоты, адаптивный */
+  .pf-prose p:has(img + img) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 0.5rem 0 1.75rem;
+  }
+  .pf-prose p:has(img + img) img {
+    aspect-ratio: 4 / 3;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    margin: 0;
+  }
+  .pf-prose ul, .pf-prose ol { color: var(--muted); line-height: 1.7; margin: 0 0 1rem 1.25rem; }
+  .pf-prose li { margin: 0.25rem 0; }
+  .pf-prose a { color: var(--bronze); text-underline-offset: 3px; }
+
+  /* Фото на странице объекта кликабельны для увеличения */
+  [data-zoomable] img { cursor: zoom-in; }
+
+  /* Лайтбокс */
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(20, 19, 17, 0.92);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .lb[hidden] { display: none; }
+  .lb.is-open { opacity: 1; }
+  .lb__img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .lb__close, .lb__nav {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(246, 243, 238, 0.12);
+    color: var(--ivory);
+    transition: background 0.2s ease;
+  }
+  .lb__close:hover, .lb__nav:hover { background: rgba(199, 161, 107, 0.9); color: var(--ink); }
+  .lb__close { top: 1rem; right: 1rem; width: 44px; height: 44px; }
+  .lb__close svg { width: 22px; height: 22px; }
+  .lb__nav { top: 50%; transform: translateY(-50%); width: 48px; height: 48px; }
+  .lb__nav svg { width: 26px; height: 26px; }
+  .lb__nav--prev { left: clamp(0.5rem, 2vw, 2rem); }
+  .lb__nav--next { right: clamp(0.5rem, 2vw, 2rem); }
+  @media (max-width: 640px) {
+    .lb__nav { width: 40px; height: 40px; bottom: 1rem; top: auto; transform: none; }
+    .lb__nav--prev { left: 1rem; }
+    .lb__nav--next { right: 1rem; }
+  }
+</style>
+
+<script>
+  (() => {
+    const lb = document.getElementById('lightbox');
+    if (!lb) return;
+    const lbImg = lb.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('[data-zoomable] img'));
+    if (!imgs.length) return;
+
+    let idx = 0;
+    // ссылка на наибольшую доступную версию фото
+    const bestSrc = (img: HTMLImageElement) => img.currentSrc || img.src;
+
+    function show(i: number) {
+      idx = (i + imgs.length) % imgs.length;
+      const src = bestSrc(imgs[idx]);
+      lbImg.src = src;
+      lbImg.alt = imgs[idx].alt || '';
+    }
+    function open(i: number) {
+      show(i);
+      lb!.hidden = false;
+      lb!.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => lb!.classList.add('is-open'));
+    }
+    function close() {
+      lb!.classList.remove('is-open');
+      lb!.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      window.setTimeout(() => { lb!.hidden = true; lbImg.src = ''; }, 200);
+    }
+
+    imgs.forEach((img, i) => img.addEventListener('click', () => open(i)));
+
+    lb.querySelector('[data-lb-close]')?.addEventListener('click', close);
+    lb.querySelector('[data-lb-prev]')?.addEventListener('click', (e) => { e.stopPropagation(); show(idx - 1); });
+    lb.querySelector('[data-lb-next]')?.addEventListener('click', (e) => { e.stopPropagation(); show(idx + 1); });
+    // клик по фону (не по фото) — закрыть
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    lbImg.addEventListener('click', (e) => e.stopPropagation());
+
+    document.addEventListener('keydown', (e) => {
+      if (lb!.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(idx - 1);
+      if (e.key === 'ArrowRight') show(idx + 1);
+    });
+  })();
+</script>

@@ -1,16 +1,17 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import icon from 'astro-icon';
-import vercel from '@astrojs/vercel';
+import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
-// output: 'static' + адаптер Vercel = статические страницы + серверные роуты
-// по требованию (у нас это /api/lead с `export const prerender = false`).
+// output: 'static' + адаптер Node (standalone) = статические страницы +
+// серверные роуты по требованию (у нас /api/lead с `export const prerender = false`).
+// Самохостинг на VPS: `node ./dist/server/entry.mjs` (HOST/PORT из env).
 export default defineConfig({
   site: 'https://sdano-perm.ru',
   output: 'static',
-  adapter: vercel(),
+  adapter: node({ mode: 'standalone' }),
   integrations: [
     // applyBaseStyles: false — базовые стили держим в src/styles/global.css
     tailwind({ applyBaseStyles: false }),

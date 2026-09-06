@@ -9,6 +9,7 @@ import Button from '../../components/Button.astro';
 import LeadForm from '../../components/LeadForm.astro';
 import { projects } from '../../data/projects';
 import { getProjectPhotos } from '../../lib/portfolioPhotos';
+import { breadcrumbs, creativeWork, SITE_URL } from '../../lib/schema';
 
 export const getStaticPaths = (() => {
   return projects.map((project) => ({
@@ -47,12 +48,30 @@ const meta = [
   { icon: icons.format, label: 'Формат', value: project.format },
   { icon: icons.duration, label: 'Срок', value: project.duration },
 ].filter(Boolean) as { icon: string; label: string; value: string }[];
+
+const path = `/portfolio/${project.slug}`;
+const ogImage = photos[0] ? new URL(photos[0].src, SITE_URL).href : undefined;
+const schema = [
+  creativeWork({
+    name: project.title,
+    description: project.summary,
+    path,
+    image: ogImage,
+  }),
+  breadcrumbs([
+    { name: 'Главная', path: '/' },
+    { name: 'Портфолио', path: '/portfolio' },
+    { name: project.title, path },
+  ]),
+];
 ---
 
 <SiteLayout
   title={`${project.title} — портфолио SDANO`}
   description={project.summary}
-  path={`/portfolio/${project.slug}`}
+  path={path}
+  ogImage={ogImage}
+  schema={schema}
 >
   <PageHero eyebrow="Объект портфолио" title={project.title} subtitle={project.summary} />
 

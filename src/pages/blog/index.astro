@@ -3,12 +3,13 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Section from '../../components/Section.astro';
 import { posts } from '../../data/posts';
+import { breadcrumbs } from '../../lib/schema';
 
 const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
 const fmt = (iso: string) => new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
-<SiteLayout title="Блог о ремонте — SDANO" description="Статьи о ремонте квартир и домов: цены, этапы, советы. Блог SDANO, Пермь." path="/blog">
+<SiteLayout title="Блог о ремонте — SDANO" description="Статьи о ремонте квартир и домов: цены, этапы, советы. Блог SDANO, Пермь." path="/blog" schema={[breadcrumbs([{ name: 'Главная', path: '/' }, { name: 'Блог', path: '/blog' }])]}>
   <PageHero eyebrow="Блог" title="Полезное о ремонте" subtitle="Разбираем цены, этапы и типичные ошибки — чтобы ремонт был предсказуемым." />
   <Section bg="ivory">
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

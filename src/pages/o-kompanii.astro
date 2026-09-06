@@ -3,9 +3,10 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
+import { breadcrumbs } from '../lib/schema';
 ---
 
-<SiteLayout title="О компании — SDANO" description="SDANO — 12 лет опыта ремонта в Перми, 150+ объектов. Работаем по договору с гарантией." path="/o-kompanii">
+<SiteLayout title="О компании — SDANO" description="SDANO — 12 лет опыта ремонта в Перми, 150+ объектов. Работаем по договору с гарантией." path="/o-kompanii" schema={[breadcrumbs([{ name: 'Главная', path: '/' }, { name: 'О компании', path: '/o-kompanii' }])]}>
   <PageHero eyebrow="О компании" title="12 лет делаем ремонт в Перми" subtitle="Более 150 сданных объектов — от студий до загородных домов. Предсказуемый процесс и ответственность по договору." />
   <Section bg="ivory">
     <div class="grid gap-10 lg:grid-cols-2">

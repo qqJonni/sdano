@@ -11,6 +11,8 @@ import LeadForm from '../components/LeadForm.astro';
 import CallbackForm from '../components/CallbackForm.astro';
 import { services } from '../data/services';
 import { projects } from '../data/projects';
+import { reviews } from '../data/reviews';
+import { faqPage } from '../lib/schema';
 import { segments, segmentGroups } from '../data/segments';
 import { complexes } from '../data/complexes';
 import { site } from '../data/site';
@@ -49,11 +51,8 @@ const includes = [
   'Финальная уборка',
 ];
 
-const reviews = [
-  { name: 'Анна К.', role: 'ЖК «Горки», 2-комн.', text: 'Сделали ремонт точно в срок и в смету. Прораб всегда на связи, фотоотчёты каждую неделю.' },
-  { name: 'Дмитрий С.', role: 'Дом, Пермский р-н', text: 'Отделка коттеджа под ключ. Понравился системный подход и аккуратность бригады.' },
-  { name: 'Мария и Игорь', role: 'ЖК «Экватор», студия', text: 'Первый ремонт в жизни — было спокойно. Всё объяснили, помогли с материалами.' },
-];
+// Первые 3 отзыва — из общего модуля (синхронизированы с объектами портфолио)
+const homeReviews = reviews.slice(0, 3);
 
 const faq = [
   ['Сколько стоит ремонт под ключ?', 'Стоимость зависит от площади, состояния объекта и уровня отделки. Точную вилку покажет калькулятор, финальную цену фиксируем в договоре после замера.'],
@@ -62,12 +61,15 @@ const faq = [
   ['Можно ли ремонт без дизайн-проекта?', 'Можно. Но проект помогает избежать переделок и точнее спланировать бюджет — предложим оптимальный вариант.'],
   ['Закупаете материалы сами?', 'Да, берём закупку и логистику на себя или работаем с вашими материалами — как удобнее.'],
 ];
+
+const schema = [faqPage(faq.map(([q, a]) => ({ q, a })))];
 ---
 
 <SiteLayout
   title="SDANO — ремонт квартир и домов под ключ в Перми"
   description="Ремонт квартир и домов под ключ в Перми: фиксированная смета, работа по договору, гарантия 2 года. 12 лет опыта, 150+ объектов."
   path="/"
+  schema={schema}
 >
   <!-- 1. HERO -->
   <section class="bg-green section-dark relative overflow-hidden">
@@ -201,13 +203,20 @@ const faq = [
   <Section bg="green" title="Отзывы клиентов" eyebrow="Что говорят о нас">
     <div class="grid gap-6 md:grid-cols-3">
       {
-        reviews.map((r) => (
+        homeReviews.map((r) => (
           <figure class="flex flex-col rounded-card border border-ivory/15 bg-green-2 p-6">
-            <div class="text-bronze text-2xl leading-none">“</div>
-            <blockquote class="mt-2 flex-1 text-ivory/85">{r.text}</blockquote>
+            <div class="flex gap-1" aria-label="Оценка 5 из 5">
+              {[0, 1, 2, 3, 4].map(() => (
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="#C7A16B" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>
+              ))}
+            </div>
+            <blockquote class="mt-4 flex-1 text-ivory/85">{r.text}</blockquote>
             <figcaption class="mt-5 border-t border-ivory/12 pt-4">
               <div class="font-semibold text-ivory">{r.name}</div>
               <div class="text-sm text-ivory/60">{r.role}</div>
+              <a href={r.href} class="mt-2 inline-block text-sm font-semibold text-ivory underline decoration-bronze decoration-2 underline-offset-[6px] hover:text-bronze transition-colors">
+                Смотреть объект →
+              </a>
             </figcaption>
           </figure>
         ))

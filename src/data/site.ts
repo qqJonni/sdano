@@ -34,8 +34,8 @@ export const site: SiteConfig = {
   email: 'sdano-perm@mail.ru',
   telegram: { handle: '@lvovvaleriy', url: 'https://t.me/lvovvaleriy' },
   max: { label: 'MAX', url: 'https://web.max.ru/25573352' },
-  address: 'г. Пермь',
-  workHours: 'Пн–Вс, 9:00–21:00',
+  address: 'г. Пермь, ул. Серебристая, 7',
+  workHours: 'Пн–Пт, 9:00–18:00',
   requisites: {
     inn: '590699729804',
     ogrnip: '324595800065909', // из договора — проверить перед публикацией

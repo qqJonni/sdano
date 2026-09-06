@@ -4,7 +4,10 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Section from '../../components/Section.astro';
 import Button from '../../components/Button.astro';
+import LeadForm from '../../components/LeadForm.astro';
 import { complexes } from '../../data/complexes';
+import { segments } from '../../data/segments';
+import { service as serviceSchema, breadcrumbs, faqPage } from '../../lib/schema';
 
 export const getStaticPaths = (() => {
   return complexes.map((complex) => ({
@@ -14,24 +17,111 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths;
 
 const { complex } = Astro.props;
+
+const related = (complex.relatedSegments ?? [])
+  .map((slug) => segments.find((s) => s.slug === slug))
+  .filter((s): s is (typeof segments)[number] => Boolean(s));
+
+const path = `/zhk/${complex.slug}`;
+const title = `Ремонт квартир в ${complex.name}`;
+const schema = [
+  serviceSchema({
+    name: title,
+    serviceType: 'Ремонт квартир под ключ',
+    description: complex.intro,
+    path,
+    priceFrom: complex.priceFrom,
+  }),
+  breadcrumbs([
+    { name: 'Главная', path: '/' },
+    { name: complex.name, path },
+  ]),
+  ...(complex.faq && complex.faq.length ? [faqPage(complex.faq)] : []),
+];
 ---
 
 <SiteLayout
-  title={`Ремонт в ${complex.name} — SDANO, Пермь`}
-  description={complex.intro}
-  path={`/zhk/${complex.slug}`}
+  title={`Ремонт квартир в ${complex.name}, Пермь — цены | SDANO`}
+  description={complex.lead ?? complex.intro}
+  path={path}
+  schema={schema}
 >
-  <PageHero eyebrow="Ремонт в ЖК" title={`Ремонт квартир в ${complex.name}`} subtitle={`${complex.district}. ${complex.intro}`} />
-  <Section bg="ivory" narrow>
-    <div class="prose-links max-w-prose space-y-4 text-muted-2">
-      <p class="text-lead text-ink">{complex.intro}</p>
-      <p>
-        Посадочная страница-заглушка под ЖК. Здесь будут типовые планировки, цены под
-        дом, примеры работ и форма заявки. Пока — «рыба».
-      </p>
+  <PageHero
+    eyebrow="Ремонт в ЖК"
+    title={`Ремонт квартир в ${complex.name}`}
+    subtitle={`${complex.district}. ${complex.intro}`}
+  />
+
+  <Section bg="ivory">
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        {complex.lead && <p class="text-lead text-ink">{complex.lead}</p>}
+        {complex.body && (
+          <div class="mt-5 space-y-4 text-muted-2">
+            {complex.body.map((p) => <p>{p}</p>)}
+          </div>
+        )}
+
+        {complex.includes && complex.includes.length > 0 && (
+          <div class="mt-10">
+            <h2>Что входит</h2>
+            <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+              {complex.includes.map((item) => (
+                <li class="flex items-start gap-3">
+                  <svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <rect x="2" y="2" width="60" height="60" rx="7" fill="#1C1B19" />
+                    <path d="M18 33 L28 43 L48 20" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <aside class="lg:col-span-5">
+        <div class="rounded-card border border-line bg-paper p-6">
+          {complex.priceFrom && <div class="font-display text-3xl text-ink">{complex.priceFrom}</div>}
+          <p class="mt-2 text-sm text-muted-2">Точную стоимость зафиксируем в договоре после замера.</p>
+          <Button href="/#calc" variant="primary" class="mt-5 w-full">Рассчитать стоимость</Button>
+        </div>
+
+        <div class="mt-5 rounded-card border border-line bg-paper p-6">
+          <h3 class="text-lg">Получить смету</h3>
+          <p class="mt-1 text-sm text-muted-2">Перезвоним за 15 минут и пришлём примеры работ.</p>
+          <LeadForm formType="Форма сметы" source={`zhk/${complex.slug}`} class="mt-4" />
+        </div>
+      </aside>
     </div>
-    <div class="mt-8">
-      <Button href="/#calc" variant="primary">Рассчитать стоимость</Button>
+  </Section>
+
+  {complex.faq && complex.faq.length > 0 && (
+    <Section bg="ivory-2" title="Частые вопросы" eyebrow="FAQ" narrow>
+      <div class="mt-6 divide-y divide-line">
+        {complex.faq.map((item) => (
+          <div class="py-5">
+            <h3 class="text-lg text-ink">{item.q}</h3>
+            <p class="mt-2 text-muted-2">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  )}
+
+  <Section bg="ivory" title="Смотрите также" narrow>
+    <div class="mt-4 flex flex-wrap gap-3">
+      {related.map((s) => (
+        <a href={`/remont/${s.slug}`} class="rounded-btn border border-line bg-paper px-4 py-2 text-sm text-ink hover:border-bronze">
+          {s.title}
+        </a>
+      ))}
+      <a href="/portfolio" class="rounded-btn border border-line bg-paper px-4 py-2 text-sm text-ink hover:border-bronze">
+        Портфолио работ
+      </a>
+      <a href="/#calc" class="rounded-btn border border-line bg-paper px-4 py-2 text-sm text-ink hover:border-bronze">
+        Калькулятор ремонта
+      </a>
     </div>
   </Section>
 </SiteLayout>

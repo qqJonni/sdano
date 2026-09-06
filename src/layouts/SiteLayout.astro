@@ -11,6 +11,8 @@ export interface Props {
   ogImage?: string;
   path?: string;
   noindex?: boolean;
+  ogType?: string;
+  schema?: Record<string, unknown>[];
 }
 
 const props = Astro.props;

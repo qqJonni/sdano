@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
+import { breadcrumbs } from '../lib/schema';
 
 const points = [
   ['Гарантия 2 года', 'На все выполненные работы. Гарантийные случаи устраняем бесплатно.'],
@@ -12,7 +13,7 @@ const points = [
 ];
 ---
 
-<SiteLayout title="Гарантия и договор — SDANO" description="Гарантия 2 года на ремонт, работа по договору с фиксированной сметой в Перми." path="/garantiya">
+<SiteLayout title="Гарантия и договор — SDANO" description="Гарантия 2 года на ремонт, работа по договору с фиксированной сметой в Перми." path="/garantiya" schema={[breadcrumbs([{ name: 'Главная', path: '/' }, { name: 'Гарантия', path: '/garantiya' }])]}>
   <PageHero eyebrow="Гарантия" title="Гарантия и договор" subtitle="Защищаем ваш ремонт документально: договор, фиксированная смета и гарантия 2 года." />
   <Section bg="ivory">
     <div class="grid gap-6 sm:grid-cols-2">

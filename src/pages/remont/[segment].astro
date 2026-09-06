@@ -4,7 +4,10 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Section from '../../components/Section.astro';
 import Button from '../../components/Button.astro';
+import LeadForm from '../../components/LeadForm.astro';
 import { segments } from '../../data/segments';
+import { services } from '../../data/services';
+import { service as serviceSchema, breadcrumbs, faqPage } from '../../lib/schema';
 
 export const getStaticPaths = (() => {
   return segments.map((segment) => ({
@@ -14,24 +17,110 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths;
 
 const { segment } = Astro.props;
+
+const related = (segment.relatedServices ?? [])
+  .map((slug) => services.find((s) => s.slug === slug))
+  .filter((s): s is (typeof services)[number] => Boolean(s));
+
+const siblings = segments.filter((s) => s.group === segment.group && s.slug !== segment.slug);
+
+const path = `/remont/${segment.slug}`;
+const schema = [
+  serviceSchema({
+    name: segment.title,
+    serviceType: 'Ремонт под ключ',
+    description: segment.intro,
+    path,
+    priceFrom: segment.priceFrom,
+  }),
+  breadcrumbs([
+    { name: 'Главная', path: '/' },
+    { name: segment.title, path },
+  ]),
+  ...(segment.faq && segment.faq.length ? [faqPage(segment.faq)] : []),
+];
 ---
 
 <SiteLayout
-  title={`${segment.title} — SDANO`}
-  description={segment.intro}
-  path={`/remont/${segment.slug}`}
+  title={`${segment.title} — цены, сроки | SDANO`}
+  description={segment.lead ?? segment.intro}
+  path={path}
+  schema={schema}
 >
   <PageHero eyebrow="Ремонт под ключ" title={segment.title} subtitle={segment.intro} />
-  <Section bg="ivory" narrow>
-    <div class="prose-links max-w-prose space-y-4 text-muted-2">
-      <p class="text-lead text-ink">{segment.intro}</p>
-      <p>
-        Это SEO-посадочная страница-заглушка. Здесь будет развёрнутый текст под запрос,
-        примеры работ, цены и ответы на вопросы. Пока — «рыба».
-      </p>
+
+  <Section bg="ivory">
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        {segment.lead && <p class="text-lead text-ink">{segment.lead}</p>}
+        {segment.body && (
+          <div class="mt-5 space-y-4 text-muted-2">
+            {segment.body.map((p) => <p>{p}</p>)}
+          </div>
+        )}
+
+        {segment.includes && segment.includes.length > 0 && (
+          <div class="mt-10">
+            <h2>Что входит</h2>
+            <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+              {segment.includes.map((item) => (
+                <li class="flex items-start gap-3">
+                  <svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <rect x="2" y="2" width="60" height="60" rx="7" fill="#1C1B19" />
+                    <path d="M18 33 L28 43 L48 20" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <aside class="lg:col-span-5">
+        <div class="rounded-card border border-line bg-paper p-6">
+          {segment.priceFrom && <div class="font-display text-3xl text-ink">{segment.priceFrom}</div>}
+          <p class="mt-2 text-sm text-muted-2">Точную стоимость зафиксируем в договоре после замера.</p>
+          <Button href="/#calc" variant="primary" class="mt-5 w-full">Рассчитать стоимость</Button>
+        </div>
+
+        <div class="mt-5 rounded-card border border-line bg-paper p-6">
+          <h3 class="text-lg">Получить смету</h3>
+          <p class="mt-1 text-sm text-muted-2">Перезвоним за 15 минут и пришлём примеры работ.</p>
+          <LeadForm formType="Форма сметы" source={`remont/${segment.slug}`} class="mt-4" />
+        </div>
+      </aside>
     </div>
-    <div class="mt-8">
-      <Button href="/#calc" variant="primary">Рассчитать стоимость</Button>
+  </Section>
+
+  {segment.faq && segment.faq.length > 0 && (
+    <Section bg="ivory-2" title="Частые вопросы" eyebrow="FAQ" narrow>
+      <div class="mt-6 divide-y divide-line">
+        {segment.faq.map((item) => (
+          <div class="py-5">
+            <h3 class="text-lg text-ink">{item.q}</h3>
+            <p class="mt-2 text-muted-2">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  )}
+
+  <Section bg="ivory" title="Смотрите также" narrow>
+    <div class="mt-4 flex flex-wrap gap-3">
+      {related.map((s) => (
+        <a href={`/uslugi/${s.slug}`} class="rounded-btn border border-line bg-paper px-4 py-2 text-sm text-ink hover:border-bronze">
+          {s.title}
+        </a>
+      ))}
+      {siblings.map((s) => (
+        <a href={`/remont/${s.slug}`} class="rounded-btn border border-line bg-paper px-4 py-2 text-sm text-ink hover:border-bronze">
+          {s.menuLabel}
+        </a>
+      ))}
+      <a href="/portfolio" class="rounded-btn border border-line bg-paper px-4 py-2 text-sm text-ink hover:border-bronze">
+        Портфолио работ
+      </a>
     </div>
   </Section>
 </SiteLayout>

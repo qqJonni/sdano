@@ -4,9 +4,10 @@ import PageHero from '../../components/PageHero.astro';
 import Section from '../../components/Section.astro';
 import PortfolioCard from '../../components/PortfolioCard.astro';
 import { projects } from '../../data/projects';
+import { breadcrumbs } from '../../lib/schema';
 ---
 
-<SiteLayout title="Портфолио ремонтов — SDANO, Пермь" description="Портфолио выполненных ремонтов квартир и домов SDANO в Перми." path="/portfolio">
+<SiteLayout title="Портфолио ремонтов — SDANO, Пермь" description="Портфолио выполненных ремонтов квартир и домов SDANO в Перми." path="/portfolio" schema={[breadcrumbs([{ name: 'Главная', path: '/' }, { name: 'Портфолио', path: '/portfolio' }])]}>
   <PageHero eyebrow="Портфолио" title="Наши объекты" subtitle="Реальные проекты ремонта под ключ в Перми и пригороде." />
   <Section bg="ivory">
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

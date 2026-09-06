@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Disallow: /spasibo
+Disallow: /design-system
+
+# ИИ-ассистенты и поисковые роботы нейросетей — разрешаем
+User-agent: YandexBot
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: https://sdano-perm.ru/sitemap-index.xml
+Host: sdano-perm.ru

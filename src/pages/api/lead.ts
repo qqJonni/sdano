@@ -160,7 +160,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (!phone) return json({ ok: false, error: 'bad_phone' }, 400);
 
   // 3) rate-limit
-  const ip = clientAddress || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  // За nginx-прокси реальный IP приходит в X-Forwarded-For; clientAddress = 127.0.0.1
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    clientAddress ||
+    'unknown';
   if (rateLimited(ip)) return json({ ok: false, error: 'rate_limited' }, 429);
 
   const formType = String(data.formType || 'Заявка');

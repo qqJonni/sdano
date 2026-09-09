@@ -73,13 +73,16 @@ import { site, mainNav } from '../data/site';
       </svg>
     </button>
   </Container>
+</header>
 
-  <!-- Мобильное меню -->
-  <div
-    id="mobile-menu"
-    class="fixed inset-0 z-50 hidden bg-ink/50 lg:hidden"
-    aria-hidden="true"
-  >
+<!-- Мобильное меню вынесено из <header>: у шапки backdrop-blur, из-за чего
+     fixed-элемент позиционировался бы относительно шапки, а не экрана
+     (меню становилось «прозрачным» и нечитаемым). -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-[60] hidden bg-ink/50 lg:hidden"
+  aria-hidden="true"
+>
     <div id="mobile-panel" class="absolute right-0 top-0 h-full w-[86%] max-w-sm translate-x-full bg-ivory shadow-float transition-transform duration-300 ease-premium">
       <div class="flex h-[76px] items-center justify-between px-5 border-b border-line">
         <span class="font-sans text-lg font-bold tracking-[0.22em]">SDANO</span>
@@ -105,7 +108,6 @@ import { site, mainNav } from '../data/site';
       </div>
     </div>
   </div>
-</header>
 
 <script>
   // Островной JS: уплотнение шапки при скролле + мобильное меню

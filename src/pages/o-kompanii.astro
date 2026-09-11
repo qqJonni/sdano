@@ -2,25 +2,166 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import Section from '../components/Section.astro';
+import SectionHeading from '../components/SectionHeading.astro';
 import Button from '../components/Button.astro';
+import { site } from '../data/site';
 import { breadcrumbs } from '../lib/schema';
+
+const stats = [
+  { num: '12 лет', label: 'на рынке ремонта в Перми' },
+  { num: '150+', label: 'сданных объектов' },
+  { num: '90%', label: 'сдаём точно в срок' },
+  { num: '3–5 мес', label: 'средний срок ремонта' },
+  { num: '2 года', label: 'гарантия по договору' },
+];
+
+const principles = [
+  {
+    title: 'Фиксированная смета',
+    text: 'Стоимость закреплена в договоре и не растёт по ходу работ, если вы сами не меняете объём.',
+  },
+  {
+    title: 'Свои бригады',
+    text: 'Работают проверенные мастера, а не случайный субподряд — поэтому качество отделки ровное на всех этапах.',
+  },
+  {
+    title: 'Один прораб на объект',
+    text: 'Один ответственный ведёт ремонт от замера до сдачи ключей — вам не нужно сводить между собой разные бригады.',
+  },
+  {
+    title: 'Фотоотчёты по этапам',
+    text: 'Каждый этап фиксируем фотографиями и приёмкой — вы контролируете процесс, даже находясь далеко.',
+  },
+  {
+    title: 'Помощь с приёмкой',
+    text: 'Поможем принять квартиру у застройщика и зафиксировать недочёты — это ваши деньги и гарантии.',
+  },
+  {
+    title: 'Оплата по этапам',
+    text: 'Платите постепенно, по мере выполнения работ, а не всё вперёд — прозрачно и спокойно.',
+  },
+];
 ---
 
-<SiteLayout title="О компании — SDANO" description="SDANO — 12 лет опыта ремонта в Перми, 150+ объектов. Работаем по договору с гарантией." path="/o-kompanii" schema={[breadcrumbs([{ name: 'Главная', path: '/' }, { name: 'О компании', path: '/o-kompanii' }])]}>
-  <PageHero eyebrow="О компании" title="12 лет делаем ремонт в Перми" subtitle="Более 150 сданных объектов — от студий до загородных домов. Предсказуемый процесс и ответственность по договору." />
+<SiteLayout
+  title="О компании SDANO — ремонт в Перми с 2013 года"
+  description="SDANO — ремонт квартир и домов под ключ в Перми. 12 лет опыта, 150+ объектов, свои бригады, договор и гарантия 2 года. Основатель — Валерий Львов."
+  path="/o-kompanii"
+  schema={[breadcrumbs([{ name: 'Главная', path: '/' }, { name: 'О компании', path: '/o-kompanii' }])]}
+>
+  <PageHero
+    eyebrow="О компании"
+    title="12 лет делаем ремонт в Перми"
+    subtitle="Свои бригады, работа по договору и один ответственный прораб на объекте. Более 150 квартир и домов — от студий до загородных."
+  />
+
+  <!-- История -->
   <Section bg="ivory">
-    <div class="grid gap-10 lg:grid-cols-2">
-      <div class="prose-links max-w-prose space-y-4 text-muted-2">
-        <p class="text-lead text-ink">Мы строим ремонт как понятный процесс, а не как лотерею.</p>
-        <p>Здесь будет история компании, ценности и подход к работе. Пока текст-заглушка.</p>
-        <p>Один прораб ведёт объект от замера до сдачи ключей. Все этапы — с фотоотчётами и приёмкой.</p>
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-7 prose-links max-w-prose space-y-4 text-muted-2">
+        <p class="text-lead text-ink">
+          SDANO — это команда, которая выросла из ремесла, а не из офиса продаж.
+        </p>
+        <p>
+          Всё началось 12 лет назад: основатель компании работал отделочником и делал ремонт
+          своими руками. Со временем заказов становилось больше, и к работе стали подключаться
+          профильные специалисты — так постепенно сформировались собственные бригады: штукатуры,
+          электрики, сантехники, плиточники, мастера чистовой отделки.
+        </p>
+        <p>
+          Сегодня SDANO делает ремонт квартир, студий и загородных домов под ключ по всей Перми.
+          Мы сознательно не работаем «на потоке» через случайный субподряд: за каждый объект
+          отвечает один прораб, а качество держится на своих проверенных мастерах.
+        </p>
+        <p>
+          Мы строим ремонт как понятный процесс, а не как лотерею: фиксируем смету и сроки в
+          договоре, ведём работы по этапам с фотоотчётом и сдаём результат по акту. 9 из 10
+          объектов сдаём точно в срок.
+        </p>
       </div>
-      <div class="aspect-[4/3] rounded-card border border-line bg-ivory-2 grid place-items-center">
-        <span class="text-muted-2 text-sm">Фото команды / объекта</span>
+      <div class="lg:col-span-5">
+        <div class="aspect-[4/5] w-full rounded-card border border-line bg-ivory-2 grid place-items-center">
+          <span class="text-muted-2 text-sm">Фото команды / объекта</span>
+        </div>
       </div>
-    </div>
-    <div class="mt-10">
-      <Button href="/#calc" variant="primary">Рассчитать ремонт</Button>
     </div>
   </Section>
+
+  <!-- Цифры -->
+  <section class="bg-ink section-dark py-14 md:py-16">
+    <div class="mx-auto w-full max-w-[1200px] px-5 md:px-8">
+      <div class="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
+        {
+          stats.map((s) => (
+            <div class="text-center md:text-left">
+              <div class="font-display text-3xl md:text-4xl text-bronze">{s.num}</div>
+              <div class="mt-1 text-sm text-ivory/70">{s.label}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Принципы -->
+  <Section bg="ivory-2" title="Как мы работаем" eyebrow="Принципы">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        principles.map((p) => (
+          <div class="rounded-card border border-line bg-paper p-6">
+            <div class="flex items-start gap-3">
+              <svg class="mt-0.5 h-6 w-6 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <rect x="2" y="2" width="60" height="60" rx="7" fill="#1C1B19" />
+                <path d="M18 33 L28 43 L48 20" stroke="#C7A16B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <h3 class="text-h3">{p.title}</h3>
+            </div>
+            <p class="mt-3 text-sm text-muted-2">{p.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- Основатель -->
+  <Section bg="ivory">
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-4">
+        <div class="aspect-[4/5] w-full max-w-sm rounded-card border border-line bg-ivory-2 grid place-items-center">
+          <span class="text-muted-2 text-sm">Фото основателя</span>
+        </div>
+      </div>
+      <div class="lg:col-span-8">
+        <SectionHeading title="Львов Валерий Вадимович" eyebrow="Основатель SDANO" />
+        <div class="mt-5 prose-links max-w-prose space-y-4 text-muted-2">
+          <p>
+            Прошёл путь от мастера-отделочника до руководителя компании, поэтому знает ремонт
+            изнутри — на каждом этапе, от черновой до чистовой. Именно этот практический опыт
+            лёг в основу подхода SDANO: понятная смета, свои бригады и ответственность за
+            результат по договору.
+          </p>
+          <p>
+            Компания работает как ИП: все договорённости — официально, с документами и гарантией.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- CTA -->
+  <section class="bg-green section-dark">
+    <div class="mx-auto w-full max-w-[1200px] px-5 md:px-8 py-14 md:py-20 text-center">
+      <SectionHeading title="Обсудим ваш ремонт?" eyebrow="Начнём с расчёта" align="center" dark class="items-center" />
+      <p class="mx-auto mt-5 max-w-xl text-ivory/80">
+        Рассчитайте ориентировочную стоимость за минуту или оставьте контакты — приедем на
+        бесплатный замер по Перми и составим смету.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <Button href="/#calc" variant="primary" size="lg">Рассчитать стоимость</Button>
+        <a href={site.phoneHref} class="inline-flex items-center gap-2 rounded-btn border border-ivory/25 px-7 py-4 font-bold text-ivory transition-colors hover:border-bronze hover:text-bronze">
+          {site.phone}
+        </a>
+      </div>
+    </div>
+  </section>
 </SiteLayout>

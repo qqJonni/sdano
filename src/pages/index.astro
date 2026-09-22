@@ -301,9 +301,22 @@ const schema = [faqPage(faq.map(([q, a]) => ({ q, a })))];
   <Section bg="ivory-2" title="О компании" eyebrow="Кто делает ваш ремонт">
     <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
       <div class="lg:col-span-5">
-        <div class="aspect-[4/5] w-full max-w-sm rounded-card border border-line bg-ivory grid place-items-center">
-          <span class="text-muted-2 text-sm">Фото основателя / бригады</span>
-        </div>
+        <figure class="max-w-sm">
+          <div class="aspect-[4/5] w-full overflow-hidden rounded-card border border-line bg-ivory">
+            <img
+              src="/team/lvov-valeriy.jpg"
+              alt="Толмачев Александр Николаевич — главный специалист технического надзора SDANO"
+              width="900"
+              height="1193"
+              loading="lazy"
+              class="h-full w-full object-cover object-top"
+            />
+          </div>
+          <figcaption class="mt-4">
+            <div class="font-display text-xl text-ink">Толмачев Александр Николаевич</div>
+            <div class="mt-1 text-sm text-muted-2">Главный специалист технического надзора · SDANO</div>
+          </figcaption>
+        </figure>
       </div>
       <div class="lg:col-span-7">
         <p class="text-lead text-ink">
